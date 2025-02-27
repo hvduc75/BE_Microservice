@@ -27,6 +27,7 @@ const handleUserLogin = async (data) => {
                     email: user.email,
                     // groupWithRoles,
                     username: user.name,
+                    userId: user.id,
                 };
 
                 let access_token = createJWT(
@@ -46,17 +47,14 @@ const handleUserLogin = async (data) => {
 
                 await user.update({ refresh_token, refresh_expired });
 
-                // kiem tra de tao cart
-                await createFunc(user.id);
-
                 return {
                     EM: 'Ok',
                     EC: 0,
                     DT: {
                         access_token: access_token,
                         refresh_token: refresh_token,
-                        groupWithRoles: groupWithRoles,
-                        role: groupWithRoles.name,
+                        // groupWithRoles: groupWithRoles,
+                        // role: groupWithRoles.name,
                         email: user.email,
                         phone: user.phone,
                         username: user.username,
@@ -85,21 +83,29 @@ const handleUserLogin = async (data) => {
 
 const handleUserRegister = async (data) => {
     try {
-        // check email/phonenumber are exist
+        if (!data.email || !data.password) {
+            return {
+                EM: 'Missing parameter',
+                EC: 1,
+                DT: '',
+            };
+        }
+
         let isEmailExist = await checkEmailExist(data.email);
         if (isEmailExist) {
             return {
                 EM: 'The email is already exist',
                 EC: 1,
+                DT: '',
             };
         }
-        let isPhoneExist = await checkPhoneExist(data.phone);
-        if (isPhoneExist) {
-            return {
-                EM: 'The phone number is already exist',
-                EC: 1,
-            };
-        }
+        // let isPhoneExist = await checkPhoneExist(data.phone);
+        // if (isPhoneExist) {
+        //     return {
+        //         EM: 'The phone number is already exist',
+        //         EC: 1,
+        //     };
+        // }
         // hash user password
         let hashPassword = hashUserPassword(data.password);
 
@@ -113,12 +119,14 @@ const handleUserRegister = async (data) => {
         return {
             EM: 'A user is created successfully!',
             EC: 0,
+            DT: '',
         };
     } catch (error) {
         console.log(error);
         return {
             EM: 'Something wrongs is service',
             EC: -2,
+            DT: '',
         };
     }
 };
