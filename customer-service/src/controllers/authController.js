@@ -8,11 +8,11 @@ const handleLogin = async (req, res) => {
         if (data && data.DT && data.DT.access_token) {
             res.cookie('access_token', data.DT.access_token, {
                 httpOnly: true,
-                maxAge: 60 * 60 * 1000,
+                maxAge: 60 * 60 * 1000 * 24,
             });
             res.cookie('refresh_token', data.DT.refresh_token, {
                 httpOnly: true,
-                maxAge: 60 * 60 * 48 * 1000,
+                maxAge: 60 * 60 * 48 * 1000 * 24,
             });
         }
         return res.status(200).json({

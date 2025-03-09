@@ -1,5 +1,4 @@
 import moment from "moment";
-
 import { EventModel } from "../models";
 
 const formatDateString = (dateString) => {
@@ -8,46 +7,42 @@ const formatDateString = (dateString) => {
 
 const AddEvent = async (userId, data) => {
   try {
-    console.log(userId);
     console.log(data);
     if (
       !userId ||
-      !data.eventImage ||
       !data.eventName ||
       !data.locationType ||
-      !data.location ||
+      !data.locationName ||
       !data.eventType ||
-      !data.eventDesc ||
+      !data.eventDescription ||
       !data.organizerName ||
       !data.organizerDesc ||
-      !data.startDate ||
-      !data.endDate
+      !data.eventLogo ||
+      !data.backgroundEvent ||
+      !data.address ||
+      !data.organizerLogo
     ) {
-      return {
-        EM: "Missing parameter...",
-        EC: 1,
-        DT: "",
-      };
+      return { EM: "Missing parameter", EC: 1, DT: "" };
     }
+
     let newEvent = new EventModel({
       userId: userId,
-      eventImage: data.eventImage,
+      eventLogo: data.eventLogo,
+      backgroundEvent: data.backgroundEvent,
+      organizerLogo: data.organizerLogo,
       eventName: data.eventName,
       locationType: data.locationType,
-      location: data.location,
+      locationName: data.locationName,
+      address: data.address,
       eventType: data.eventType,
-      eventDesc: data.eventDesc,
+      eventDescription: data.eventDescription,
       organizerName: data.organizerName,
       organizerDesc: data.organizerDesc,
-      startDate: formatDateString(data.startDate),
-      endDate: formatDateString(data.endDate),
+      checkAddEvent: data.checkAddEvent || false,
     });
+
     let event = await newEvent.save();
-    return {
-      EM: "Add event successfully...",
-      EC: 0,
-      DT: event,
-    };
+    return { EM: "Add event successfully", EC: 0, DT: event };
   } catch (error) {
     console.log(error);
     return {
@@ -58,6 +53,23 @@ const AddEvent = async (userId, data) => {
   }
 };
 
-module.exports = {
-  AddEvent,
+const getEventById = async (eventId) => {
+  try {
+    if (!eventId) {
+      return { EM: "Must have eventId", EC: 1, DT: "" };
+    }
+
+    let event = await EventModel.findOne({ _id: eventId });
+
+    return { EM: "Get event successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
 };
+
+export default { AddEvent, getEventById };

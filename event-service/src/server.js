@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 
 import connectDB from "./config/ConnectDB.js";
 import initApiRoutes from "./routes/api.js";
-// import { CreateChannel } from "./utils/index.js";
 
 dotenv.config();
 
@@ -19,11 +18,7 @@ const StartServer = async () => {
   // config cookie -parser
   app.use(cookieParser());
 
-//   const channel = await CreateChannel();
-  
-//   initApiRoutes(app, channel);
   initApiRoutes(app);
-  
   await connectDB();
   
   app.listen(process.env.PORT || 8083, () => {

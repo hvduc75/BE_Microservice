@@ -1,26 +1,26 @@
 import express from "express";
+
 import eventController from "../controllers/eventController";
 import ticketController from "../controllers/ticketController";
-// import orderController from "../controllers/orderController";
-// import { SubscribeMessage } from "../utils";
-// import service from "../services/eventService";
+import extractUserFromHeader from "../middleware/extractUser";
+import upload from "../middleware/uploadMiddleware";
 
 const router = express.Router();
-
-const extractUserFromHeader = (req, res, next) => {
-  if (req.headers["x-user"]) {
-    req.user = JSON.parse(req.headers["x-user"]); // Chuyển từ chuỗi JSON về object
-  }
-  next();
-};
+const extractUser = extractUserFromHeader;
 
 const initApiRoutes = (app) => {
-  // SubscribeMessage(channel, service);
-
-  router.all("*", extractUserFromHeader);
-  router.post("/add-event", eventController.AddEvent);
+  router.all("*", extractUser);
+  router.post(
+    "/add-event",
+    upload.fields([
+      { name: "eventLogo", maxCount: 1 },
+      { name: "backgroundEvent", maxCount: 1 },
+      { name: "organizerLogo", maxCount: 1 },
+    ]),
+    eventController.AddEvent
+  );
+  router.get("/getEventById", eventController.getEventById);
   router.post("/add-tickets", ticketController.AddTickets);
-  // router.post("/order", orderController.createOrder);
 
   return app.use("/", router);
 };

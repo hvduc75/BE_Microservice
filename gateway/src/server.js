@@ -1,19 +1,15 @@
 import express from "express";
-import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import proxy from "express-http-proxy";
 
 import { checkUserJWT } from "./middleware/JWTAction.js";
+import configCors from "./config/config_cors.js";
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:3000", 
-  methods: "GET,POST,PUT,DELETE,OPTIONS",
-  allowedHeaders: "Content-Type,Authorization",
-  credentials: true
-}));
+// config cors
+configCors(app);
 
 // config bodyParser
 app.use(bodyParser.json());
@@ -30,7 +26,10 @@ const addUserToHeaders = (proxyReqOpts, srcReq) => {
 };
 
 app.use("/customer", checkUserJWT, proxy("http://localhost:8081", { proxyReqOptDecorator: addUserToHeaders }));
-app.use("/event", checkUserJWT, proxy("http://localhost:8083", { proxyReqOptDecorator: addUserToHeaders }));
+app.use("/event", checkUserJWT, proxy("http://localhost:8083", { 
+  parseReqBody: false, 
+  proxyReqOptDecorator: addUserToHeaders
+}));
 app.use("/product", checkUserJWT, proxy("http://localhost:8082", { proxyReqOptDecorator: addUserToHeaders }));
 
 app.listen(8080, () => {
