@@ -9,9 +9,9 @@ const TicketSchema = new mongoose.Schema(
     ticketMin: { type: Number, required: true },
     ticketMax: { type: Number, required: true },
     ticketDesc: { type: String, required: true },
-    ticketImage: { type: String, required: true },
-    startTime: { type: Date, required: true },
-    endTime: { type: Date, required: true },
+    ticketImage: { type: Buffer, required: true },
+    eventTicketSaleStartTime: { type: Date, required: true },
+    eventTicketSaleEndTime: { type: Date, required: true },
   },
   { timestamps: true } 
 );

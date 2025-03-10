@@ -2,7 +2,7 @@ import moment from "moment";
 import { EventModel } from "../models";
 
 const formatDateString = (dateString) => {
-  return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
+  return moment(dateString).format("YYYY-MM-DD HH:mm:ss");
 };
 
 const AddEvent = async (userId, data) => {
@@ -72,4 +72,29 @@ const getEventById = async (eventId) => {
   }
 };
 
-export default { AddEvent, getEventById };
+const updateEventDate = async (data) => {
+  console.log(data);
+  const { eventId, startDate, endDate } = data;
+  try {
+    if (!eventId || !startDate || !endDate) {
+      return { EM: "Missing parameter", EC: 1, DT: "" };
+    }
+
+    let event = await EventModel.findOne({ _id: eventId });
+    event.startDate = formatDateString(startDate);
+    event.endDate = formatDateString(endDate);
+
+    await event.save();
+
+    return { EM: "Update event date successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+}
+
+export default { AddEvent, getEventById, updateEventDate };

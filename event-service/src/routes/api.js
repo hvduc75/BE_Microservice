@@ -10,6 +10,8 @@ const extractUser = extractUserFromHeader;
 
 const initApiRoutes = (app) => {
   router.all("*", extractUser);
+
+  router.get("/getEventById", eventController.getEventById);
   router.post(
     "/add-event",
     upload.fields([
@@ -19,8 +21,19 @@ const initApiRoutes = (app) => {
     ]),
     eventController.AddEvent
   );
-  router.get("/getEventById", eventController.getEventById);
-  router.post("/add-tickets", ticketController.AddTickets);
+  router.put("/updateEventDate", upload.none(), eventController.updateEventDate);
+
+  router.get("/getTicketByEventId", ticketController.getTicketByEventId);
+  router.post(
+    "/add-ticket",
+    upload.single("ticketImage"),
+    ticketController.AddTicket
+  );
+  router.put(
+    "/update-ticket",
+    upload.single("ticketImage"),
+    ticketController.updateTicket
+  );
 
   return app.use("/", router);
 };

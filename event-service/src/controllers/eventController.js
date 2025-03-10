@@ -12,8 +12,6 @@ const AddEvent = async (req, res) => {
       ? req.files["organizerLogo"][0].buffer
       : null;
 
-      console.log(req.body);
-
     let data = await eventService.AddEvent(req.user.userId, {
       ...req.body,
       eventLogo,
@@ -53,6 +51,25 @@ const getEventById = async (req, res) => {
   }
 }
 
+const updateEventDate = async (req, res) => {
+  try {
+    console.log(req.body);
+    let data = await eventService.updateEventDate(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 module.exports = {
-  AddEvent,getEventById
+  AddEvent,getEventById, updateEventDate
 };
