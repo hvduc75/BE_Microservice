@@ -12,6 +12,7 @@ const initApiRoutes = (app) => {
   router.all("*", extractUser);
 
   router.get("/getEventById", eventController.getEventById);
+  router.get("/getEventByCondition", eventController.getEventByCondition);
   router.post(
     "/add-event",
     upload.fields([
@@ -21,7 +22,18 @@ const initApiRoutes = (app) => {
     ]),
     eventController.AddEvent
   );
+  router.put(
+    "/edit-event",
+    upload.fields([
+      { name: "eventLogo", maxCount: 1 },
+      { name: "backgroundEvent", maxCount: 1 },
+      { name: "organizerLogo", maxCount: 1 },
+    ]),
+    eventController.editEvent
+  );
   router.put("/updateEventDate", upload.none(), eventController.updateEventDate);
+  router.put("/updateContentEmail", upload.none(), eventController.updateContentEmail);
+  router.put("/updateBankAccount", upload.none(), eventController.updateBankAccount);
 
   router.get("/getTicketByEventId", ticketController.getTicketByEventId);
   router.post(

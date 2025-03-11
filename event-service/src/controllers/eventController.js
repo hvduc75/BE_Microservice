@@ -33,9 +33,61 @@ const AddEvent = async (req, res) => {
   }
 };
 
+const editEvent = async (req, res) => {
+  try {
+    console.log(req.files);
+    const eventLogo = req.files["eventLogo"]
+      ? req.files["eventLogo"][0].buffer
+      : null;
+    const backgroundEvent = req.files["backgroundEvent"]
+      ? req.files["backgroundEvent"][0].buffer
+      : null;
+    const organizerLogo = req.files["organizerLogo"]
+      ? req.files["organizerLogo"][0].buffer
+      : null;
+
+    let data = await eventService.editEvent({
+      ...req.body,
+      eventLogo,
+      backgroundEvent,
+      organizerLogo,
+    });
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 const getEventById = async (req, res) => {
   try {
     let data = await eventService.getEventById(req.query.eventId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
+const getEventByCondition = async (req, res) => {
+  try {
+    let data = await eventService.getEventByCondition(req.query);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -70,6 +122,42 @@ const updateEventDate = async (req, res) => {
   }
 }
 
+const updateContentEmail = async (req, res) => {
+  try {
+    let data = await eventService.updateContentEmail(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
+const updateBankAccount = async (req, res) => {
+  try {
+    let data = await eventService.updateBankAccount(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 module.exports = {
-  AddEvent,getEventById, updateEventDate
+  AddEvent,getEventById, updateEventDate, getEventByCondition, editEvent, updateBankAccount, updateContentEmail
 };

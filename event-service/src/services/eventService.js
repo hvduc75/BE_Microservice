@@ -5,9 +5,54 @@ const formatDateString = (dateString) => {
   return moment(dateString).format("YYYY-MM-DD HH:mm:ss");
 };
 
+const getEventById = async (eventId) => {
+  try {
+    if (!eventId) {
+      return { EM: "Must have eventId", EC: 1, DT: "" };
+    }
+
+    let event = await EventModel.findOne({ _id: eventId });
+
+    return { EM: "Get event successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+const getEventByCondition = async (data) => {
+  try {
+    const { condition, limit = 5, page = 1 } = data;
+    if (condition === undefined) {
+      return { EM: "Must have condition", EC: 1, DT: "" };
+    }
+
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 5;
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const events = await EventModel.find({ checkAddEvent: condition })
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 });
+
+    return { EM: "Get event successfully", EC: 0, DT: events };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const AddEvent = async (userId, data) => {
   try {
-    console.log(data);
     if (
       !userId ||
       !data.eventName ||
@@ -38,7 +83,7 @@ const AddEvent = async (userId, data) => {
       eventDescription: data.eventDescription,
       organizerName: data.organizerName,
       organizerDesc: data.organizerDesc,
-      checkAddEvent: data.checkAddEvent || false,
+      checkAddEvent: data.checkAddEvent || 0,
     });
 
     let event = await newEvent.save();
@@ -53,19 +98,57 @@ const AddEvent = async (userId, data) => {
   }
 };
 
-const getEventById = async (eventId) => {
+const editEvent = async (data) => {
   try {
-    if (!eventId) {
-      return { EM: "Must have eventId", EC: 1, DT: "" };
+    if (
+      !data.eventId ||
+      !data.eventName ||
+      !data.locationType ||
+      !data.locationName ||
+      !data.eventType ||
+      !data.eventDescription ||
+      !data.organizerName ||
+      !data.organizerDesc ||
+      !data.address
+    ) {
+      return { EM: "Missing parameter", EC: 1, DT: "" };
     }
 
-    let event = await EventModel.findOne({ _id: eventId });
+    let currentEvent = await EventModel.findById(data.eventId);
+    if (!currentEvent) {
+      return { EM: "Event not found", EC: 1, DT: "" };
+    }
 
-    return { EM: "Get event successfully", EC: 0, DT: event };
+    let updateData = {
+      eventName: data.eventName,
+      locationType: data.locationType,
+      locationName: data.locationName,
+      address: data.address,
+      eventType: data.eventType,
+      eventDescription: data.eventDescription,
+      organizerName: data.organizerName,
+      organizerDesc: data.organizerDesc,
+      checkAddEvent: data.checkAddEvent || 0,
+      eventLogo: data.eventLogo ? data.eventLogo : currentEvent.eventLogo,
+      backgroundEvent: data.backgroundEvent
+        ? data.backgroundEvent
+        : currentEvent.backgroundEvent,
+      organizerLogo: data.organizerLogo
+        ? data.organizerLogo
+        : currentEvent.organizerLogo,
+    };
+
+    let eventUpdate = await EventModel.findByIdAndUpdate(
+      data.eventId,
+      updateData,
+      { new: true }
+    );
+
+    return { EM: "Edit event successfully", EC: 0, DT: eventUpdate };
   } catch (error) {
     console.log(error);
     return {
-      EM: "Something wrongs is service...",
+      EM: "Something went wrong in service...",
       EC: -2,
       DT: [],
     };
@@ -73,7 +156,6 @@ const getEventById = async (eventId) => {
 };
 
 const updateEventDate = async (data) => {
-  console.log(data);
   const { eventId, startDate, endDate } = data;
   try {
     if (!eventId || !startDate || !endDate) {
@@ -95,6 +177,65 @@ const updateEventDate = async (data) => {
       DT: [],
     };
   }
+};
+
+const updateContentEmail = async (data) => {
+  if (!data.eventId || !data.contentEmail) {
+    return { EM: "Missing parameter", EC: 1, DT: "" };
+  }
+  try {
+    let event = await EventModel.findOne({ _id: data.eventId });
+    if (!event) {
+      return { EM: "Event not found", EC: 1, DT: "" };
+    }
+    event.contentEmail = data.contentEmail;
+    await event.save();
+    return { EM: "Update content email successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+const updateBankAccount = async (data) => {
+  if(!data.eventId || !data.accountName || !data.accountNumber || !data.bankName || !data.branch) {
+    return { EM: "Missing parameter", EC: 1, DT: "" };
+  }
+  try {
+    let event = await EventModel.findOne({ _id: data.eventId });
+    if (!event) {
+      return { EM: "Event not found", EC: 1, DT: "" };
+    }
+    event.accountName = data.accountName;
+    event.accountNumber = data.accountNumber;
+    event.bankName = data.bankName;
+    event.branch = data.branch;
+
+    await event.save();
+    event.checkAddEvent = 1;
+    await event.save();
+
+    return { EM: "Update bank account successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
 }
 
-export default { AddEvent, getEventById, updateEventDate };
+export default {
+  AddEvent,
+  getEventById,
+  updateEventDate,
+  getEventByCondition,
+  editEvent,
+  updateContentEmail,
+  updateBankAccount,
+};

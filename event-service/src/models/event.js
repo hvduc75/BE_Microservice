@@ -16,7 +16,12 @@ const EventSchema = new mongoose.Schema(
     organizerDesc: { type: String, required: true },
     startDate: { type: Date },
     endDate: { type: Date },
-    checkAddEvent: { type: Boolean, default: false },
+    contentEmail: { type: String },
+    accountName: { type: String },
+    accountNumber: { type: String },
+    bankName: { type: String },
+    branch: { type: String },
+    checkAddEvent: { type: Number},
     // tickets: [
     //   {
     //     ticketName: { type: String, required: true },
