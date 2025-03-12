@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 const { v4: uuidv4 } = require('uuid');
 
 import { checkEmailExist, checkPhoneExist, hashUserPassword } from './userApiService';
-// import { getGroupWithRoles } from './JWTService';
+import { getGroupWithRoles } from './groupService';
 import { createJWT, verifyToken } from '../middleware/JWTAction';
 
 const checkPassword = (inputPassword, hashPassword) => {
@@ -22,12 +22,11 @@ const handleUserLogin = async (data) => {
         if (user) {
             let isCorrectPassword = checkPassword(data.password, user.password);
             if (isCorrectPassword) {
-                // let groupWithRoles = await getGroupWithRoles(user);
+                let groupWithRoles = await getGroupWithRoles(user);
                 let payload = {
                     email: user.email,
-                    // groupWithRoles,
+                    groupWithRoles,
                     username: user.name,
-                    userId: user.id,
                 };
 
                 let access_token = createJWT(
@@ -53,8 +52,8 @@ const handleUserLogin = async (data) => {
                     DT: {
                         access_token: access_token,
                         refresh_token: refresh_token,
-                        // groupWithRoles: groupWithRoles,
-                        // role: groupWithRoles.name,
+                        groupWithRoles: groupWithRoles,
+                        role: groupWithRoles.name,
                         email: user.email,
                         phone: user.phone,
                         username: user.username,
