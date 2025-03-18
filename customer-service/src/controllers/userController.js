@@ -144,7 +144,6 @@ const deleteFunc = async (req, res) => {
 
 const getAccount = async (req, res) => {
     try {
-        console.log(req.user)
         let data = await userApiService.getAccount(req.user.email, req.token, req.user.groupWithRoles);
         return res.status(200).json({
             EM: data.EM,

@@ -6,7 +6,8 @@ const nonSecurePaths = [
     '/logout',
     '/login',
     '/register',
-    '/getAllProduct'
+    '/getAllProduct',
+    // '/search'
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {
@@ -46,9 +47,7 @@ const checkUserJWT = (req, res, next) => {
     console.log('req.path', req.path);
     let cookies = req.cookies;
     let tokenFromHeader = extractToken(req);
-    console.log('tokenFromHeader', tokenFromHeader);
-    console.log('cookies', cookies);
-
+    
     if ((cookies && cookies.access_token) || tokenFromHeader) {
         let token = cookies && cookies.access_token ? cookies.access_token : tokenFromHeader;
         let decoded = verifyToken(token, process.env.ACCESS_TOKEN_SECRET);

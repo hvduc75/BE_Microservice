@@ -13,6 +13,7 @@ const initApiRoutes = (app) => {
 
   router.get("/getEventById", eventController.getEventById);
   router.get("/getEventByCondition", eventController.getEventByCondition);
+  router.get("/searchEvent", eventController.searchEvent);
   router.post(
     "/add-event",
     upload.fields([
@@ -34,6 +35,7 @@ const initApiRoutes = (app) => {
   router.put("/updateEventDate", upload.none(), eventController.updateEventDate);
   router.put("/updateContentEmail", upload.none(), eventController.updateContentEmail);
   router.put("/updateBankAccount", upload.none(), eventController.updateBankAccount);
+  router.put("/confirmEvent", upload.none(), eventController.confirmEvent);
 
   router.get("/getTicketByEventId", ticketController.getTicketByEventId);
   router.post(

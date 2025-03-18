@@ -1,5 +1,59 @@
 import eventService from "../services/eventService";
 
+const getEventById = async (req, res) => {
+  try {
+    let data = await eventService.getEventById(req.query.eventId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
+const getEventByCondition = async (req, res) => {
+  try {
+    let data = await eventService.getEventByCondition(req.query);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
+const searchEvent = async (req, res) => {
+  try {
+    let data = await eventService.searchEvent(req.query);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 const AddEvent = async (req, res) => {
   try {
     const eventLogo = req.files["eventLogo"]
@@ -67,42 +121,6 @@ const editEvent = async (req, res) => {
   }
 };
 
-const getEventById = async (req, res) => {
-  try {
-    let data = await eventService.getEventById(req.query.eventId);
-    return res.status(200).json({
-      EM: data.EM,
-      EC: data.EC,
-      DT: data.DT,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      EM: "error from server",
-      EC: "-1",
-      DT: "",
-    });
-  }
-}
-
-const getEventByCondition = async (req, res) => {
-  try {
-    let data = await eventService.getEventByCondition(req.query);
-    return res.status(200).json({
-      EM: data.EM,
-      EC: data.EC,
-      DT: data.DT,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      EM: "error from server",
-      EC: "-1",
-      DT: "",
-    });
-  }
-}
-
 const updateEventDate = async (req, res) => {
   try {
     console.log(req.body);
@@ -158,6 +176,24 @@ const updateBankAccount = async (req, res) => {
   }
 }
 
+const confirmEvent = async (req, res) => {
+  try {
+    let data = await eventService.confirmEvent(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 module.exports = {
-  AddEvent,getEventById, updateEventDate, getEventByCondition, editEvent, updateBankAccount, updateContentEmail
+  AddEvent,getEventById, updateEventDate, getEventByCondition, editEvent, updateBankAccount, updateContentEmail, confirmEvent, searchEvent
 };

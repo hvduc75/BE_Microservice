@@ -21,20 +21,19 @@ const EventSchema = new mongoose.Schema(
     accountNumber: { type: String },
     bankName: { type: String },
     branch: { type: String },
-    checkAddEvent: { type: Number},
-    // tickets: [
-    //   {
-    //     ticketName: { type: String, required: true },
-    //     ticketPrice: { type: Number, required: true },
-    //     ticketAmount: { type: Number, required: true },
-    //     ticketMin: { type: Number, required: true },
-    //     ticketMax: { type: Number, required: true },
-    //     ticketDesc: { type: String, required: true },
-    //     ticketImage: { type: String, required: true },
-    //   },
-    // ],
+    checkAddEvent: { type: Number },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true }, 
+    toObject: { virtuals: true },
+  }
 );
+
+EventSchema.virtual("tickets", {
+  ref: "Ticket",
+  localField: "_id",
+  foreignField: "eventId",
+});
 
 export default mongoose.model("Event", EventSchema);

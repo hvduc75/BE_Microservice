@@ -11,7 +11,7 @@ const getEventById = async (eventId) => {
       return { EM: "Must have eventId", EC: 1, DT: "" };
     }
 
-    let event = await EventModel.findOne({ _id: eventId });
+    let event = await EventModel.findOne({ _id: eventId }).populate("tickets");
 
     return { EM: "Get event successfully", EC: 0, DT: event };
   } catch (error) {
@@ -36,6 +36,39 @@ const getEventByCondition = async (data) => {
     const skip = (pageNumber - 1) * limitNumber;
 
     const events = await EventModel.find({ checkAddEvent: condition })
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 });
+
+    return { EM: "Get event successfully", EC: 0, DT: events };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+const searchEvent = async (data) => {
+  try {
+    const { category, limit = 20, page = 1 } = data;
+    
+    if (!category) {
+      return { EM: "Must have category", EC: 1, DT: "" };
+    }
+
+    const pageNumber = parseInt(page, 10) || 1;
+    const categoryData = String(category); // Chuyển category thành string để regex
+    const limitNumber = parseInt(limit, 10) || 20;
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Lấy danh sách sự kiện có kèm danh sách vé
+    const events = await EventModel.find({
+      eventType: { $regex: categoryData, $options: "i" },
+    })
+      .populate("tickets")  // Lấy luôn danh sách vé của mỗi event
       .skip(skip)
       .limit(limitNumber)
       .sort({ createdAt: -1 });
@@ -128,7 +161,6 @@ const editEvent = async (data) => {
       eventDescription: data.eventDescription,
       organizerName: data.organizerName,
       organizerDesc: data.organizerDesc,
-      checkAddEvent: data.checkAddEvent || 0,
       eventLogo: data.eventLogo ? data.eventLogo : currentEvent.eventLogo,
       backgroundEvent: data.backgroundEvent
         ? data.backgroundEvent
@@ -230,6 +262,28 @@ const updateBankAccount = async (data) => {
   }
 }
 
+const confirmEvent = async (data) => {
+  if (!data.eventId) {
+    return { EM: "Must have eventId", EC: 1, DT: "" };
+  }
+  try {
+    let event = await EventModel.findOne({ _id: data.eventId });
+    if (!event) {
+      return { EM: "Event not found", EC: 1, DT: "" };
+    }
+    event.checkAddEvent = 2;
+    await event.save();
+    return { EM: "Confirm Event successfully", EC: 0, DT: event };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something wrongs is service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 export default {
   AddEvent,
   getEventById,
@@ -238,4 +292,6 @@ export default {
   editEvent,
   updateContentEmail,
   updateBankAccount,
+  confirmEvent,
+  searchEvent
 };

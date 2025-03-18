@@ -24,6 +24,7 @@ const handleUserLogin = async (data) => {
             if (isCorrectPassword) {
                 let groupWithRoles = await getGroupWithRoles(user);
                 let payload = {
+                    userId: user.id,
                     email: user.email,
                     groupWithRoles,
                     username: user.name,
