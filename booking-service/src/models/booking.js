@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const BookingSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
-    eventId: { type: mongoose.Schema.Types.ObjectId, required: true }, 
+    userId: { type: Number, required: true },
+    eventId: { type: String, required: true },
     tickets: [
         {
-            ticketId: { type: mongoose.Schema.Types.ObjectId, required: true }, 
+            ticketId: { type: String, required: true },
             ticketName: { type: String, required: true },
             ticketPrice: { type: Number, required: true },
             quantity: { type: Number, required: true }, 
@@ -13,7 +13,7 @@ const BookingSchema = new mongoose.Schema({
     ],
     bookingTime: { type: Date, required: true },
     totalAmount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "confirmed", "canceled"], default: "pending" },
+    status: { type: String, enum: ["PENDING", "CONFIRMED", "CANCELED"], default: "PENDING" },
 }, { timestamps: true });
 
 export default mongoose.model("Booking", BookingSchema);

@@ -19,6 +19,24 @@ const AddTicket = async (req, res) => {
   }
 };
 
+const checkAndUpdateTickets = async (req, res) => {
+  try {
+    let data = await ticketService.checkAndUpdateTickets(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 const getTicketByEventId = async (req, res) => {
   try {
     let eventId = req.query.eventId;
@@ -61,4 +79,5 @@ module.exports = {
   AddTicket,
   getTicketByEventId,
   updateTicket,
+  checkAndUpdateTickets,
 };

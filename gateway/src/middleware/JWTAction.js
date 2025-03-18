@@ -7,6 +7,7 @@ const nonSecurePaths = [
     '/login',
     '/register',
     '/getAllProduct',
+    '/booking-httpcall',
     // '/search'
 ];
 

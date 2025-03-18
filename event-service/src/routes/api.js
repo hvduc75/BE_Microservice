@@ -2,6 +2,7 @@ import express from "express";
 
 import eventController from "../controllers/eventController";
 import ticketController from "../controllers/ticketController";
+import httpController from "../controllers/httpController";
 import extractUserFromHeader from "../middleware/extractUser";
 import upload from "../middleware/uploadMiddleware";
 
@@ -10,6 +11,12 @@ const extractUser = extractUserFromHeader;
 
 const initApiRoutes = (app) => {
   router.all("*", extractUser);
+
+  router.post(
+    "/booking-httpcall",
+    upload.none(),
+    httpController.bookingHttpCall
+  );
 
   router.get("/getEventById", eventController.getEventById);
   router.get("/getEventByCondition", eventController.getEventByCondition);
@@ -32,9 +39,21 @@ const initApiRoutes = (app) => {
     ]),
     eventController.editEvent
   );
-  router.put("/updateEventDate", upload.none(), eventController.updateEventDate);
-  router.put("/updateContentEmail", upload.none(), eventController.updateContentEmail);
-  router.put("/updateBankAccount", upload.none(), eventController.updateBankAccount);
+  router.put(
+    "/updateEventDate",
+    upload.none(),
+    eventController.updateEventDate
+  );
+  router.put(
+    "/updateContentEmail",
+    upload.none(),
+    eventController.updateContentEmail
+  );
+  router.put(
+    "/updateBankAccount",
+    upload.none(),
+    eventController.updateBankAccount
+  );
   router.put("/confirmEvent", upload.none(), eventController.confirmEvent);
 
   router.get("/getTicketByEventId", ticketController.getTicketByEventId);
@@ -42,6 +61,11 @@ const initApiRoutes = (app) => {
     "/add-ticket",
     upload.single("ticketImage"),
     ticketController.AddTicket
+  );
+  router.post(
+    "/check-and-update-tickets",
+    upload.none(),
+    ticketController.checkAndUpdateTickets
   );
   router.put(
     "/update-ticket",

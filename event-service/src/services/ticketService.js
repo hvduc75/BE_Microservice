@@ -1,4 +1,5 @@
 import moment from "moment";
+import mongoose from "mongoose";
 import { TicketModel } from "../models";
 
 const formatDateString = (dateString) => {
@@ -7,7 +8,7 @@ const formatDateString = (dateString) => {
 
 const getTicketByEventId = async (eventId) => {
   try {
-    let tickets = await TicketModel.find({ eventId: eventId })
+    let tickets = await TicketModel.find({ eventId: eventId });
 
     if (!tickets || tickets.length === 0) {
       return {
@@ -82,6 +83,58 @@ const AddTicket = async (data) => {
   }
 };
 
+const checkAndUpdateTickets = async (data) => {
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
+
+  try {
+    const { tickets } = data;
+    console.log("test", tickets);
+    let ticketUpdates = [];
+
+    for (const ticket of tickets) {
+      const existingTicket = await TicketModel.findOne({
+        _id: ticket.ticketId,
+      })
+      // .session(session);
+      if (!existingTicket || existingTicket.ticketAmount < ticket.quantity) {
+        // await session.abortTransaction();
+        console.log(error);
+        return {
+          EM: `${ticket.ticketName} chỉ còn lại ${ticket.ticketAmount} vé!`,
+          EC: -1,
+          DT: [],
+        };
+      }
+
+      ticketUpdates.push({
+        updateOne: {
+          filter: { _id: ticket.ticketId },
+          update: { $inc: { ticketAmount: -ticket.quantity } },
+        },
+      });
+    }
+
+    await TicketModel.bulkWrite(ticketUpdates);
+
+    // await session.commitTransaction();
+    // session.endSession();
+
+    return {
+      EM: "Check tickets successfully...",
+      EC: 0,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const updateTicket = async (data) => {
   try {
     if (
@@ -115,10 +168,12 @@ const updateTicket = async (data) => {
         ticketMax: data.ticketMax,
         ticketDesc: data.ticketDesc,
         ticketImage: data.ticketImage,
-        eventTicketSaleStartTime: formatDateString(data.eventTicketSaleStartTime),
+        eventTicketSaleStartTime: formatDateString(
+          data.eventTicketSaleStartTime
+        ),
         eventTicketSaleEndTime: formatDateString(data.eventTicketSaleEndTime),
       },
-      { new: true } 
+      { new: true }
     );
 
     if (!updatedTicket) {
@@ -145,5 +200,8 @@ const updateTicket = async (data) => {
 };
 
 module.exports = {
-  AddTicket, getTicketByEventId, updateTicket
+  AddTicket,
+  getTicketByEventId,
+  updateTicket,
+  checkAndUpdateTickets,
 };

@@ -1,8 +1,8 @@
-import bookingService from "../services/bookingService";
+import httpService from "../services/httpService";
 
-const createBooking = async (req, res) => {
+const bookingHttpCall = async (req, res) => {
   try {
-    let data = await bookingService.createBooking(req.user.userId, req.body);
+    let data = await httpService.bookingHttpCall(req.body);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -19,5 +19,5 @@ const createBooking = async (req, res) => {
 };
 
 module.exports = {
-  createBooking,
+  bookingHttpCall,
 };

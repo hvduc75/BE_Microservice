@@ -16,7 +16,7 @@ const getEventById = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const getEventByCondition = async (req, res) => {
   try {
@@ -34,7 +34,7 @@ const getEventByCondition = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const searchEvent = async (req, res) => {
   try {
@@ -52,7 +52,7 @@ const searchEvent = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const AddEvent = async (req, res) => {
   try {
@@ -138,7 +138,7 @@ const updateEventDate = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const updateContentEmail = async (req, res) => {
   try {
@@ -156,7 +156,7 @@ const updateContentEmail = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const updateBankAccount = async (req, res) => {
   try {
@@ -174,7 +174,7 @@ const updateBankAccount = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const confirmEvent = async (req, res) => {
   try {
@@ -192,8 +192,16 @@ const confirmEvent = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 module.exports = {
-  AddEvent,getEventById, updateEventDate, getEventByCondition, editEvent, updateBankAccount, updateContentEmail, confirmEvent, searchEvent
+  AddEvent,
+  getEventById,
+  updateEventDate,
+  getEventByCondition,
+  editEvent,
+  updateBankAccount,
+  updateContentEmail,
+  confirmEvent,
+  searchEvent,
 };

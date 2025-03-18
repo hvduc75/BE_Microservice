@@ -20,17 +20,32 @@ app.use(cookieParser());
 
 const addUserToHeaders = (proxyReqOpts, srcReq) => {
   if (srcReq.user) {
-    proxyReqOpts.headers["X-User"] = JSON.stringify(srcReq.user); 
+    proxyReqOpts.headers["X-User"] = JSON.stringify(srcReq.user);
   }
   return proxyReqOpts;
 };
 
-app.use("/customer", checkUserJWT, proxy("http://localhost:8081", { proxyReqOptDecorator: addUserToHeaders }));
-app.use("/event", checkUserJWT, proxy("http://localhost:8083", { 
-  parseReqBody: false, 
-  proxyReqOptDecorator: addUserToHeaders
-}));
-app.use("/product", checkUserJWT, proxy("http://localhost:8082", { proxyReqOptDecorator: addUserToHeaders }));
+app.use(
+  "/customer",
+  checkUserJWT,
+  proxy("http://localhost:8081", { proxyReqOptDecorator: addUserToHeaders })
+);
+app.use(
+  "/event",
+  checkUserJWT,
+  proxy("http://localhost:8083", {
+    parseReqBody: false,
+    proxyReqOptDecorator: addUserToHeaders,
+  })
+);
+app.use(
+  "/booking",
+  checkUserJWT,
+  proxy("http://localhost:8082", {
+    parseReqBody: false,
+    proxyReqOptDecorator: addUserToHeaders,
+  })
+);
 
 app.listen(8080, () => {
   console.log("Gateway is Listening to Port 8080");
