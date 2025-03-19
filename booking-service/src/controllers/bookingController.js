@@ -1,5 +1,23 @@
 import bookingService from "../services/bookingService";
 
+const getBookingById = async (req, res) => {
+  try {
+    let data = await bookingService.getBookingById(req.query.bookingId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 const createBooking = async (req, res) => {
   try {
     let data = await bookingService.createBooking(req.user.userId, req.body);
@@ -20,4 +38,5 @@ const createBooking = async (req, res) => {
 
 module.exports = {
   createBooking,
+  getBookingById,
 };

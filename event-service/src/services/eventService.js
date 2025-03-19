@@ -35,12 +35,15 @@ const getEventByCondition = async (data) => {
     const limitNumber = parseInt(limit, 10) || 5;
     const skip = (pageNumber - 1) * limitNumber;
 
+    const totalEvents = await EventModel.countDocuments({ checkAddEvent: condition });
+    const totalPages = Math.ceil(totalEvents / limitNumber);
+
     const events = await EventModel.find({ checkAddEvent: condition })
       .skip(skip)
       .limit(limitNumber)
       .sort({ createdAt: -1 });
 
-    return { EM: "Get event successfully", EC: 0, DT: events };
+    return { EM: "Get event successfully", EC: 0, DT: { events, totalPages } };
   } catch (error) {
     console.log(error);
     return {
@@ -54,26 +57,32 @@ const getEventByCondition = async (data) => {
 const searchEvent = async (data) => {
   try {
     const { category, limit = 20, page = 1 } = data;
-    
+
     if (!category) {
       return { EM: "Must have category", EC: 1, DT: "" };
     }
 
     const pageNumber = parseInt(page, 10) || 1;
-    const categoryData = String(category); // Chuyển category thành string để regex
+    const categoryData = String(category);
     const limitNumber = parseInt(limit, 10) || 20;
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Lấy danh sách sự kiện có kèm danh sách vé
+    const totalEvents = await EventModel.countDocuments({
+      eventType: { $regex: categoryData, $options: "i" },
+      checkAddEvent: 2,
+    });
+    const totalPages = Math.ceil(totalEvents / limitNumber);
+
     const events = await EventModel.find({
       eventType: { $regex: categoryData, $options: "i" },
+      checkAddEvent: 2,
     })
-      .populate("tickets")  // Lấy luôn danh sách vé của mỗi event
+      .populate("tickets")
       .skip(skip)
       .limit(limitNumber)
       .sort({ createdAt: -1 });
 
-    return { EM: "Get event successfully", EC: 0, DT: events };
+    return { EM: "Get event successfully", EC: 0, DT: { events, totalPages } };
   } catch (error) {
     console.log(error);
     return {
@@ -234,7 +243,13 @@ const updateContentEmail = async (data) => {
 };
 
 const updateBankAccount = async (data) => {
-  if(!data.eventId || !data.accountName || !data.accountNumber || !data.bankName || !data.branch) {
+  if (
+    !data.eventId ||
+    !data.accountName ||
+    !data.accountNumber ||
+    !data.bankName ||
+    !data.branch
+  ) {
     return { EM: "Missing parameter", EC: 1, DT: "" };
   }
   try {
@@ -260,7 +275,7 @@ const updateBankAccount = async (data) => {
       DT: [],
     };
   }
-}
+};
 
 const confirmEvent = async (data) => {
   if (!data.eventId) {
@@ -293,5 +308,5 @@ export default {
   updateContentEmail,
   updateBankAccount,
   confirmEvent,
-  searchEvent
+  searchEvent,
 };

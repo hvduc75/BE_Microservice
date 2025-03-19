@@ -1,15 +1,46 @@
 import { BookingModel } from "../models";
 import { PublishBookingEvent } from "../utils";
 
+const getBookingById = async (bookingId) => {
+  try {
+    if (!bookingId) {
+      return {
+        EM: "BookingId is required",
+        EC: -1,
+        DT: [],
+      };
+    }
+    let booking = await BookingModel.findOne({ _id: bookingId });
+    if (!booking) {
+      return {
+        EM: "Booking not found",
+        EC: -1,
+        DT: [],
+      };
+    }
+    return { EM: "Get booking successfully", EC: 0, DT: booking };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const createBooking = async (userId, data) => {
   try {
     let tickets = data?.tickets;
     if (typeof tickets === "string") {
       tickets = JSON.parse(tickets);
     }
-    let res = await PublishBookingEvent({ event: "CREATE_BOOKING", data: tickets });
+    let res = await PublishBookingEvent({
+      event: "CREATE_BOOKING",
+      data: tickets,
+    });
 
-    if(res.EC === 0){
+    if (res.EC === 0) {
       let newBooking = new BookingModel({
         userId: userId,
         eventId: data.eventId,
@@ -19,11 +50,10 @@ const createBooking = async (userId, data) => {
         status: "PENDING",
       });
       await newBooking.save();
-      return { EM: "Create booking successfully", EC: 0, DT: [] };
-    }else{
+      return { EM: "Create booking successfully", EC: 0, DT: newBooking };
+    } else {
       return res;
     }
-
   } catch (error) {
     console.log(error);
     return {
@@ -36,4 +66,5 @@ const createBooking = async (userId, data) => {
 
 module.exports = {
   createBooking,
+  getBookingById,
 };
