@@ -238,29 +238,30 @@ const updateUser = async (data) => {
 
 const updateProfile = async (data) => {
     try {
-        if (!data.id) {
+        if (!data.userId) {
             return {
-                EM: 'Error Empty Input',
+                EM: 'Must have userId',
                 EC: 1,
                 DT: '',
             };
         }
         let user = await db.User.findOne({
             where: {
-                id: data.id,
+                id: data.userId,
             },
         });
         if (user) {
             await user.update({
-                username: data.username ? data.username : user.username,
-                sex: data.gender ? data.gender : user.sex,
+                username: data.name ? data.name : user.username,
+                phone: data.phone ? data.phone : user.phone,
+                gender: data.gender ? data.gender : user.gender,
                 birthDay: data.birthDay ? data.birthDay : user.birthDay,
                 avatar: data.avatar ? data.avatar : user.avatar,
             });
             return {
                 EM: 'Update user succeeds',
                 EC: 0,
-                DT: '',
+                DT: user,
             };
         } else {
             return {
@@ -328,7 +329,7 @@ const getAccount = async (email, access_token, groupWithRoles) => {
                     username: user.username,
                     id: user.id,
                     avatar: user.avatar,
-                    gender: user.sex,
+                    gender: user.gender,
                     birthDay: user.birthDay,
                 },
             };

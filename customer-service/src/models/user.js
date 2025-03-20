@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     User.init(
         {
             username: DataTypes.STRING,
+            receiverName: DataTypes.STRING,
             email: DataTypes.STRING,
             password: DataTypes.STRING,
             type: { type: DataTypes.STRING, defaultValue: 'LOCAL' },

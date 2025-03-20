@@ -4,17 +4,24 @@ import roleController from "../controllers/roleController.js";
 import groupController from "../controllers/groupController.js";
 import userController from "../controllers/userController.js";
 import extractUserFromHeader from "../middleware/extractUser";
+import multer from "multer";
 
 const router = express.Router();
 const extractUser = extractUserFromHeader;
 
+// config form data
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 const initApiRoutes = (app) => {
   router.all("*", extractUser);
 
+  // user routes
+  router.get("/account", userController.getAccount);
   router.post("/login", authController.handleLogin);
   router.post("/register", authController.handleRegister);
   router.post("/logout", authController.handleLogout);
-  router.get("/account", userController.getAccount);
+  router.put("/update-profile", upload.single('avatar'), userController.updateProfile);
 
   // role routes
   router.get("/role/read", roleController.readFunc);

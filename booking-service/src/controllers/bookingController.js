@@ -36,7 +36,11 @@ const createBooking = async (req, res) => {
   }
 };
 
+const updateReceiverInfo = async (req, res) => {
+};
+
 module.exports = {
   createBooking,
   getBookingById,
+  updateReceiverInfo,
 };

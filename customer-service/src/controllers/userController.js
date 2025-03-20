@@ -107,6 +107,7 @@ const updateFunc = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
+        req.body.userId = req.user.userId;
         req.body.avatar = req.file ? req.file.buffer : null;
         let data = await userApiService.updateProfile(req.body);
         return res.status(200).json({

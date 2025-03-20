@@ -28,7 +28,10 @@ const addUserToHeaders = (proxyReqOpts, srcReq) => {
 app.use(
   "/customer",
   checkUserJWT,
-  proxy("http://localhost:8081", { proxyReqOptDecorator: addUserToHeaders })
+  proxy("http://localhost:8081", {
+    parseReqBody: false,
+    proxyReqOptDecorator: addUserToHeaders,
+  })
 );
 app.use(
   "/event",
