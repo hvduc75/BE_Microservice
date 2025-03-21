@@ -49,6 +49,13 @@ app.use(
     proxyReqOptDecorator: addUserToHeaders,
   })
 );
+app.use(
+  "/payment",
+  checkUserJWT,
+  proxy("http://localhost:8084", {
+    proxyReqOptDecorator: addUserToHeaders,
+  })
+);
 
 app.listen(8080, () => {
   console.log("Gateway is Listening to Port 8080");
