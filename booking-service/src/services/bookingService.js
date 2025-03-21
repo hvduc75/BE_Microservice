@@ -67,8 +67,8 @@ const createBooking = async (userId, data) => {
   }
 };
 
-const updateReceiverEmail = async (userId, data) => {
-  const { bookingId, receiverEmail } = data;
+const updateReceiverInfo = async (userId, data) => {
+  const { bookingId, receiverEmail, receiverPhone, receiverName } = data;
   try {
     if (!userId || !bookingId || !receiverEmail) {
       return {
@@ -89,6 +89,8 @@ const updateReceiverEmail = async (userId, data) => {
       };
     }
     booking.receiverEmail = receiverEmail;
+    booking.receiverPhone = receiverPhone;
+    booking.receiverName = receiverName;
     await booking.save();
     return { EM: "Update receiver email successfully", EC: 0, DT: booking };
   } catch (error) {
@@ -104,5 +106,5 @@ const updateReceiverEmail = async (userId, data) => {
 module.exports = {
   createBooking,
   getBookingById,
-  updateReceiverEmail,
+  updateReceiverInfo,
 };

@@ -36,9 +36,9 @@ const createBooking = async (req, res) => {
   }
 };
 
-const updateReceiverEmail = async (req, res) => {
+const updateReceiverInfo = async (req, res) => {
   try {
-    let data = await bookingService.updateReceiverEmail(req.user.userId, req.body);
+    let data = await bookingService.updateReceiverInfo(req.user.userId, req.body);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -57,5 +57,5 @@ const updateReceiverEmail = async (req, res) => {
 module.exports = {
   createBooking,
   getBookingById,
-  updateReceiverEmail,
+  updateReceiverInfo,
 };

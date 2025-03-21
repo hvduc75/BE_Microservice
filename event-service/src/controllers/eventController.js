@@ -1,8 +1,9 @@
 import eventService from "../services/eventService";
 
 const getEventById = async (req, res) => {
+  // console.log(req.user); tạm thời chưa dùng được userId vì nó đã bỏ qua JWT mất rồi nên ko gán lại decoded lại được
   try {
-    let data = await eventService.getEventById(req.query.eventId);
+    let data = await eventService.getEventById( req.query.eventId);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

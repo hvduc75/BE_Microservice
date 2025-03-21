@@ -14,6 +14,8 @@ const BookingSchema = new mongoose.Schema({
     bookingTime: { type: Date, required: true },
     totalAmount: { type: Number, required: true },
     receiverEmail: { type: String },
+    receiverName: { type: String },
+    receiverPhone: { type: String },
     status: { type: String, enum: ["PENDING", "CONFIRMED", "CANCELED"], default: "PENDING" },
 }, { timestamps: true });
 
