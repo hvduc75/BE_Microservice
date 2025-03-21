@@ -10,7 +10,10 @@ const getBookingById = async (userId, bookingId) => {
         DT: [],
       };
     }
-    let booking = await BookingModel.findOne({ _id: bookingId, userId: userId });
+    let booking = await BookingModel.findOne({
+      _id: bookingId,
+      userId: userId,
+    });
     if (!booking) {
       return {
         EM: "Booking not found",
@@ -64,7 +67,42 @@ const createBooking = async (userId, data) => {
   }
 };
 
+const updateReceiverEmail = async (userId, data) => {
+  const { bookingId, receiverEmail } = data;
+  try {
+    if (!userId || !bookingId || !receiverEmail) {
+      return {
+        EM: "Missing required fields",
+        EC: -1,
+        DT: [],
+      };
+    }
+    let booking = await BookingModel.findOne({
+      _id: bookingId,
+      userId: userId,
+    });
+    if (!booking) {
+      return {
+        EM: "Booking not found",
+        EC: -1,
+        DT: [],
+      };
+    }
+    booking.receiverEmail = receiverEmail;
+    await booking.save();
+    return { EM: "Update receiver email successfully", EC: 0, DT: booking };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 module.exports = {
   createBooking,
   getBookingById,
+  updateReceiverEmail,
 };

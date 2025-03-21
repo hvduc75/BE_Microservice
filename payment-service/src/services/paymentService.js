@@ -1,4 +1,15 @@
 import { PaymentModel } from "../models";
+import { CreateChannel, PublishMessage } from "../utils";
+
+let channel;
+
+const initializeChannel = async () => {
+  channel = await CreateChannel();
+};
+
+initializeChannel();
+
+const BOOKING_SERVICE = "booking_service";
 
 const updatePayment = async (bookingId, status, transactionId) => {
   try {
@@ -12,6 +23,15 @@ const updatePayment = async (bookingId, status, transactionId) => {
       existingPayment.status = status;
       existingPayment.transactionId = transactionId;
       await existingPayment.save();
+
+      let dataPayload = {
+        event: "SEND_EMAIL",
+        data: {
+          bookingId,
+        },
+      };
+
+      PublishMessage(channel, BOOKING_SERVICE, JSON.stringify(dataPayload));
 
       return { EC: 0, EM: "Payment updated successfully" };
     } else {
