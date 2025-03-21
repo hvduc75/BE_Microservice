@@ -1,1 +1,1 @@
-export { default as PaymentSchema } from './payment.js';
+export { default as PaymentModel } from './payment.js';

@@ -15,7 +15,7 @@ const PaymentSchema = new mongoose.Schema(
       enum: ["VNPAY", "MOMO", "ZALO_PAY"],
       required: true,
     },
-    transactionId: { type: String, required: true, unique: true },
+    transactionId: { type: String },
   },
   {
     timestamps: true,
