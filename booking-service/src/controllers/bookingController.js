@@ -2,7 +2,7 @@ import bookingService from "../services/bookingService";
 
 const getBookingById = async (req, res) => {
   try {
-    let data = await bookingService.getBookingById(req.query.bookingId);
+    let data = await bookingService.getBookingById(req.user.userId, req.query.bookingId);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

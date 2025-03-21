@@ -18,10 +18,11 @@ const initApiRoutes = (app) => {
 
   // user routes
   router.get("/account", userController.getAccount);
-  router.post("/login", authController.handleLogin);
-  router.post("/register", authController.handleRegister);
+  router.post("/login", upload.none(), authController.handleLogin);
+  router.post("/register", upload.none(), authController.handleRegister);
   router.post("/logout", authController.handleLogout);
   router.put("/update-profile", upload.single('avatar'), userController.updateProfile);
+  router.put("/update-receiverInfo", upload.none(), userController.updateReceiverInfo);
 
   // role routes
   router.get("/role/read", roleController.readFunc);

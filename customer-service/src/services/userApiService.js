@@ -280,6 +280,49 @@ const updateProfile = async (data) => {
     }
 };
 
+const updateReceiverInfo = async (data) => {
+    try {
+        if (!data.userId) {
+            return {
+                EM: 'Must have userId',
+                EC: 1,
+                DT: '',
+            };
+        }
+        let user = await db.User.findOne({
+            where: {
+                id: data.userId,
+            },
+        });
+        if (user) {
+            await user.update({
+                receiverName: data.receiverName ? data.receiverName : user.receiverName,
+                receiverPhone: data.receiverPhone ? data.receiverPhone : user.receiverPhone,
+                receiverEmail: data.receiverEmail ? data.receiverEmail : user.receiverEmail,
+                address: data.address ? data.address : user.address,
+            });
+            return {
+                EM: 'Update user succeeds',
+                EC: 0,
+                DT: user,
+            };
+        } else {
+            return {
+                EM: 'User not found',
+                EC: 2,
+                DT: '',
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            EM: 'somethings wrongs with services',
+            EC: 1,
+            DT: [],
+        };
+    }
+};
+
 const deleteUser = async (userId) => {
     try {
         let user = await db.User.findOne({
@@ -331,6 +374,10 @@ const getAccount = async (email, access_token, groupWithRoles) => {
                     avatar: user.avatar,
                     gender: user.gender,
                     birthDay: user.birthDay,
+                    receiverName: user.receiverName,
+                    receiverPhone: user.receiverPhone,
+                    receiverEmail: user.receiverEmail,
+                    address: user.address,
                 },
             };
         } else {
@@ -405,4 +452,5 @@ module.exports = {
     getAllUserByWeek,
     getAccount,
     updatePhone,
+    updateReceiverInfo
 };

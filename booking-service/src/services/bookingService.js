@@ -1,7 +1,7 @@
 import { BookingModel } from "../models";
 import { PublishBookingEvent } from "../utils";
 
-const getBookingById = async (bookingId) => {
+const getBookingById = async (userId, bookingId) => {
   try {
     if (!bookingId) {
       return {
@@ -10,7 +10,7 @@ const getBookingById = async (bookingId) => {
         DT: [],
       };
     }
-    let booking = await BookingModel.findOne({ _id: bookingId });
+    let booking = await BookingModel.findOne({ _id: bookingId, userId: userId });
     if (!booking) {
       return {
         EM: "Booking not found",

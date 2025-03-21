@@ -17,6 +17,9 @@ module.exports = {
             email: {
                 type: Sequelize.STRING,
             },
+            receiverEmail: {
+                type: Sequelize.STRING,
+            },
             password: {
                 type: Sequelize.STRING,
             },
@@ -33,6 +36,9 @@ module.exports = {
                 type: Sequelize.DATE,
             },
             phone: {
+                type: Sequelize.STRING,
+            },
+            receiverPhone: {
                 type: Sequelize.STRING,
             },
             tokenLogin: {

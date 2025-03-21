@@ -146,7 +146,6 @@ const updateTicket = async (data) => {
       !data.ticketMin ||
       !data.ticketMax ||
       !data.ticketDesc ||
-      !data.ticketImage ||
       !data.eventTicketSaleStartTime ||
       !data.eventTicketSaleEndTime
     ) {
