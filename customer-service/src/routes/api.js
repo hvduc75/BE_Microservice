@@ -21,6 +21,7 @@ const initApiRoutes = (app) => {
   router.post("/login", upload.none(), authController.handleLogin);
   router.post("/register", upload.none(), authController.handleRegister);
   router.post("/logout", authController.handleLogout);
+  router.post("/refresh_token", authController.handleRefreshToken);
   router.put("/update-profile", upload.single('avatar'), userController.updateProfile);
   router.put("/update-receiverInfo", upload.none(), userController.updateReceiverInfo);
 

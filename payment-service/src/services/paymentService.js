@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { PaymentModel } from "../models";
 import { CreateChannel, PublishMessage } from "../utils";
 
@@ -9,33 +11,42 @@ const initializeChannel = async () => {
 
 initializeChannel();
 
-const BOOKING_SERVICE = "booking_service";
-
 const updatePayment = async (bookingId, status, transactionId) => {
   try {
     const existingPayment = await PaymentModel.findOne({ bookingId });
 
-    if (existingPayment) {
-      if (existingPayment.transactionId) {
-        return { EC: 1, EM: "Transaction already recorded" };
+    if(status === "SUCCESS"){
+      if (existingPayment) {
+        if (existingPayment.transactionId) {
+          return { EC: 1, EM: "Transaction already recorded" };
+        }
+  
+        existingPayment.status = status;
+        existingPayment.transactionId = transactionId;
+        await existingPayment.save();
+  
+        let dataPayload = {
+          event: "SEND_EMAIL",
+          data: {
+            bookingId,
+          },
+        };
+  
+        PublishMessage(channel, process.env.BOOKING_SERVICE, JSON.stringify(dataPayload));
+  
+        return { EC: 0, EM: "Payment updated successfully" };
+      } else {
+        return { EC: -1, EM: "Payment not found" };
       }
-
-      existingPayment.status = status;
-      existingPayment.transactionId = transactionId;
-      await existingPayment.save();
-
-      let dataPayload = {
-        event: "SEND_EMAIL",
-        data: {
-          bookingId,
-        },
-      };
-
-      PublishMessage(channel, BOOKING_SERVICE, JSON.stringify(dataPayload));
-
-      return { EC: 0, EM: "Payment updated successfully" };
-    } else {
-      return { EC: -1, EM: "Payment not found" };
+    }else{
+      if (existingPayment) {
+        existingPayment.status = status;
+        await existingPayment.save();
+  
+        return { EC: 0, EM: "Payment updated successfully" };
+      } else {
+        return { EC: -1, EM: "Payment not found" };
+      }
     }
   } catch (error) {
     console.log(error);
@@ -47,14 +58,4 @@ const updatePayment = async (bookingId, status, transactionId) => {
   }
 };
 
-const updatePaymentStatus = async (orderId, status) => {
-  try {
-    await Payment.updateOne({ bookingId: orderId }, { status });
-    return { EC: 0, EM: "Payment updated successfully" };
-  } catch (error) {
-    console.error(error);
-    return { EC: 2, EM: "Update failed" };
-  }
-};
-
-module.exports = { updatePayment, updatePaymentStatus };
+module.exports = { updatePayment };

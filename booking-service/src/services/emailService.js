@@ -16,6 +16,9 @@ const sendEmail = async (bookingId) => {
       return { EM: "Booking not found", EC: -1, DT: [] };
     }
 
+    booking.status = "CONFIRMED";
+    await booking.save();
+
     let data = await axios.get(
       `http://localhost:8080/event/getEventById?eventId=${booking.eventId}`
     );

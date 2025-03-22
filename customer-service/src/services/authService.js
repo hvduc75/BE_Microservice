@@ -154,6 +154,7 @@ const handleRefreshToken = async (data) => {
                     email: user.email,
                     username: user.username,
                     groupWithRoles: decoded.groupWithRoles,
+                    userId: user.id,
                 };
 
                 const access_token = createJWT(

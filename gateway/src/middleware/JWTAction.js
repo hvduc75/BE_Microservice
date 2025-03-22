@@ -9,6 +9,8 @@ const nonSecurePaths = [
     '/getAllProduct',
     '/booking-httpcall',
     '/getEventById',
+    '/refresh_token',
+    '/searchEvent'
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {
