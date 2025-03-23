@@ -15,6 +15,7 @@ const initApiRoutes = (app, channel) => {
   router.get("/getBookingById", bookingController.getBookingById);
   router.get("/getAllBookingByEventId", bookingController.getAllBookingByEventId);
   router.post("/create-booking", upload.none(), bookingController.createBooking);
+  router.post("/deleteBooking", upload.none(), bookingController.deleteBooking);
   router.put("/update-receiverInfo", upload.none(), bookingController.updateReceiverInfo);
 
   return app.use("/", router);

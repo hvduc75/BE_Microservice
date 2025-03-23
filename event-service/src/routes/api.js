@@ -3,12 +3,15 @@ import eventController from "../controllers/eventController";
 import ticketController from "../controllers/ticketController";
 import httpController from "../controllers/httpController";
 import extractUserFromHeader from "../middleware/extractUser";
+import { SubscribeMessage } from "../utils";
+import service from "../services/handleEventService";
 import upload from "../middleware/uploadMiddleware";
 
 const router = express.Router();
 const extractUser = extractUserFromHeader;
 
-const initApiRoutes = (app) => {
+const initApiRoutes = (app, channel) => {
+  SubscribeMessage(channel, service);
   router.all("*", extractUser);
 
   router.post(

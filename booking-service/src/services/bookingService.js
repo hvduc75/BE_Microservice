@@ -1,5 +1,15 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { BookingModel } from "../models";
-import { PublishBookingEvent } from "../utils";
+import { PublishBookingEvent, PublishMessage, CreateChannel } from "../utils";
+
+let channel;
+
+const initializeChannel = async () => {
+  channel = await CreateChannel();
+};
+
+initializeChannel();
 
 const getBookingById = async (userId, bookingId) => {
   try {
@@ -127,9 +137,59 @@ const updateReceiverInfo = async (userId, data) => {
   }
 };
 
+const deleteBooking = async (userId, bookingId) => {
+  try {
+    if (!bookingId) {
+      return {
+        EM: "Must have bookingId",
+        EC: -1,
+        DT: [],
+      };
+    }
+    if (!userId) {
+      return {
+        EM: "Must have userId",
+        EC: -1,
+        DT: [],
+      };
+    }
+    let booking = await BookingModel.findOneAndDelete({
+      _id: bookingId,
+      userId: userId,
+    });
+
+    let dataPayload = {
+      event: "DELETE_BOOKING",
+      data: {
+        eventId: booking.eventId, 
+        tickets: booking.tickets,
+      },
+    };
+
+    PublishMessage(channel, process.env.EVENT_SERVICE, JSON.stringify(dataPayload));
+
+    if (!booking) {
+      return {
+        EM: "Booking not found",
+        EC: -1,
+        DT: [],
+      };
+    }
+    return { EM: "Delete booking successfully", EC: 0, DT: booking };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 module.exports = {
   createBooking,
   getBookingById,
   updateReceiverInfo,
   getAllBookingByEventId,
+  deleteBooking,
 };
