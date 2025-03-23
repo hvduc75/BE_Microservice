@@ -21,6 +21,7 @@ const EventSchema = new mongoose.Schema(
     accountNumber: { type: String },
     bankName: { type: String },
     branch: { type: String },
+    score: { type: Number, default: 0 },
     checkAddEvent: { type: Number },
   },
   {

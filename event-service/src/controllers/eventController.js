@@ -3,7 +3,7 @@ import eventService from "../services/eventService";
 const getEventById = async (req, res) => {
   // console.log(req.user); tạm thời chưa dùng được userId vì nó đã bỏ qua JWT mất rồi nên ko gán lại decoded lại được
   try {
-    let data = await eventService.getEventById( req.query.eventId);
+    let data = await eventService.getEventById(req.query.eventId);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -21,7 +21,10 @@ const getEventById = async (req, res) => {
 
 const getEventByCondition = async (req, res) => {
   try {
-    let data = await eventService.getEventByCondition(req.user.userId, req.query);
+    let data = await eventService.getEventByCondition(
+      req.user.userId,
+      req.query
+    );
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -54,6 +57,42 @@ const searchEvent = async (req, res) => {
     });
   }
 };
+
+const getEventByTime = async (req, res) => {
+  try {
+    let data = await eventService.getEventByTime(req.query);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
+const getEventByScore = async (req, res) => {
+  try {
+    let data = await eventService.getEventByScore();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
 
 const AddEvent = async (req, res) => {
   try {
@@ -194,6 +233,24 @@ const confirmEvent = async (req, res) => {
   }
 };
 
+const updateScore = async (req, res) => {
+  try {
+    let data = await eventService.updateScore(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   AddEvent,
   getEventById,
@@ -204,4 +261,7 @@ module.exports = {
   updateContentEmail,
   confirmEvent,
   searchEvent,
+  getEventByTime,
+  updateScore,
+  getEventByScore
 };

@@ -1,5 +1,4 @@
 import express from "express";
-
 import eventController from "../controllers/eventController";
 import ticketController from "../controllers/ticketController";
 import httpController from "../controllers/httpController";
@@ -21,6 +20,8 @@ const initApiRoutes = (app) => {
   router.get("/getEventById", eventController.getEventById);
   router.get("/getEventByCondition", eventController.getEventByCondition);
   router.get("/searchEvent", eventController.searchEvent);
+  router.get("/getEventByTime", eventController.getEventByTime);
+  router.get("/getEventByScore", eventController.getEventByScore);
   router.post(
     "/add-event",
     upload.fields([
@@ -55,6 +56,7 @@ const initApiRoutes = (app) => {
     eventController.updateBankAccount
   );
   router.put("/confirmEvent", upload.none(), eventController.confirmEvent);
+  router.put("/updateScore", upload.none(), eventController.updateScore);
 
   router.get("/getTicketByEventId", ticketController.getTicketByEventId);
   router.post(
