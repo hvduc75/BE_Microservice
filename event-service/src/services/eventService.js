@@ -24,14 +24,15 @@ const getEventById = async (eventId) => {
   }
 };
 
-const getEventByCondition = async (userId, data) => {
+const getEventByCondition = async (role, userId, data) => {
   try {
     const { condition, limit = 5, page = 1 } = data;
+
     if (condition === undefined) {
       return { EM: "Must have condition", EC: 1, DT: "" };
     }
 
-    if (!userId) {
+    if (role === "User" && !userId) {
       return { EM: "Must have userId", EC: 1, DT: "" };
     }
 
@@ -39,12 +40,15 @@ const getEventByCondition = async (userId, data) => {
     const limitNumber = parseInt(limit, 10) || 5;
     const skip = (pageNumber - 1) * limitNumber;
 
-    const totalEvents = await EventModel.countDocuments({
-      checkAddEvent: condition,
-    });
+    let query = { checkAddEvent: condition };
+    if (role === "User") {
+      query.userId = userId;
+    }
+
+    const totalEvents = await EventModel.countDocuments(query);
     const totalPages = Math.ceil(totalEvents / limitNumber);
 
-    const events = await EventModel.find({ checkAddEvent: condition, userId })
+    const events = await EventModel.find(query)
       .skip(skip)
       .limit(limitNumber)
       .sort({ createdAt: -1 });
@@ -310,15 +314,16 @@ const editEvent = async (data) => {
 };
 
 const updateEventDate = async (data) => {
-  const { eventId, startDate, endDate } = data;
+  const { eventId, startDate = null, endDate = null } = data;
+  console.log("data", data);
   try {
-    if (!eventId || !startDate || !endDate) {
-      return { EM: "Missing parameter", EC: 1, DT: "" };
+    if (!eventId) {
+      return { EM: "Must have eventId", EC: 1, DT: "" };
     }
 
     let event = await EventModel.findOne({ _id: eventId });
-    event.startDate = formatDateString(startDate);
-    event.endDate = formatDateString(endDate);
+    event.startDate = startDate ?  formatDateString(startDate) : event.startDate;
+    event.endDate = endDate ? formatDateString(endDate) : event.endDate;
 
     await event.save();
 

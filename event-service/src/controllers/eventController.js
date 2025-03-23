@@ -22,6 +22,7 @@ const getEventById = async (req, res) => {
 const getEventByCondition = async (req, res) => {
   try {
     let data = await eventService.getEventByCondition(
+      req.user.groupWithRoles.name,
       req.user.userId,
       req.query
     );

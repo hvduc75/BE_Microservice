@@ -22,6 +22,10 @@ function sortObject(obj) {
   return sorted;
 }
 
+const getExpireDate = (countdownInSeconds) => {
+  return moment().add(countdownInSeconds, 'seconds').format('YYYYMMDDHHmmss');
+}
+
 const checkout = async (req, res) => {
   let date = new Date();
   let createDate = moment(date).format("YYYYMMDDHHmmss");
@@ -39,6 +43,7 @@ const checkout = async (req, res) => {
   let orderId = req.body.orderId;
   let amount = req.body.amount;
   let bankCode = req.body.bankCode;
+  let expireDate = getExpireDate(req.body.expireDate);
   let userId = req.user.userId;
   let paymentMethod = "VNPAY";
 
@@ -60,6 +65,7 @@ const checkout = async (req, res) => {
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
   vnp_Params["vnp_IpAddr"] = ipAddr;
   vnp_Params["vnp_CreateDate"] = createDate;
+  vnp_Params["vnp_ExpireDate"] = expireDate;
   if (bankCode) {
     vnp_Params["vnp_BankCode"] = bankCode;
   }

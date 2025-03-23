@@ -10,7 +10,9 @@ const nonSecurePaths = [
     '/booking-httpcall',
     '/getEventById',
     '/refresh_token',
-    '/searchEvent'
+    '/searchEvent',
+    '/getEventByScore',
+    '/getEventByTime',
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {
@@ -54,7 +56,7 @@ const checkUserJWT = (req, res, next) => {
     if ((cookies && cookies.access_token) || tokenFromHeader) {
         let token = cookies && cookies.access_token ? cookies.access_token : tokenFromHeader;
         let decoded = verifyToken(token, process.env.ACCESS_TOKEN_SECRET);
-
+        
         if (decoded) {
             req.user = decoded;
             req.token = token;

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
+import './cron/cronJobs';
 import connectDB from "./config/ConnectDB.js";
 import initApiRoutes from "./routes/api.js";
 
