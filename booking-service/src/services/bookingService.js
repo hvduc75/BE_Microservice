@@ -32,6 +32,30 @@ const getBookingById = async (userId, bookingId) => {
   }
 };
 
+const getAllBookingByEventId = async (userId, eventId) => {
+  try {
+    if (!eventId) {
+      return {
+        EM: "Must have eventId",
+        EC: -1,
+        DT: [],
+      };
+    }
+    let bookings = await BookingModel.find({
+      userId: userId,
+      eventId: eventId,
+    });
+    return { EM: "Get all booking successfully", EC: 0, DT: bookings };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const createBooking = async (userId, data) => {
   try {
     let tickets = data?.tickets;
@@ -107,4 +131,5 @@ module.exports = {
   createBooking,
   getBookingById,
   updateReceiverInfo,
+  getAllBookingByEventId,
 };

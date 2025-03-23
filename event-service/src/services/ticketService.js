@@ -89,19 +89,28 @@ const checkAndUpdateTickets = async (data) => {
 
   try {
     const { tickets } = data;
-    console.log("test", tickets);
+    
+    const ticketIds = tickets.map(ticket => ticket.ticketId);
+    const existingTickets = await TicketModel.find({ _id: { $in: ticketIds } }) //.session(session);
+
+    if (existingTickets.length !== tickets.length) {
+      // await session.abortTransaction();
+      return {
+        EM: "Có vé không tồn tại...",
+        EC: -1,
+        DT: [],
+      };
+    }
+
     let ticketUpdates = [];
 
     for (const ticket of tickets) {
-      const existingTicket = await TicketModel.findOne({
-        _id: ticket.ticketId,
-      })
-      // .session(session);
+      const existingTicket = existingTickets.find(t => t._id.toString() === ticket.ticketId);
+
       if (!existingTicket || existingTicket.ticketAmount < ticket.quantity) {
         // await session.abortTransaction();
-        console.log(error);
         return {
-          EM: `${ticket.ticketName} chỉ còn lại ${ticket.ticketAmount} vé!`,
+          EM: `${ticket.ticketName} chỉ còn lại ${existingTicket ? existingTicket.ticketAmount : 0} vé!`,
           EC: -1,
           DT: [],
         };
@@ -110,25 +119,28 @@ const checkAndUpdateTickets = async (data) => {
       ticketUpdates.push({
         updateOne: {
           filter: { _id: ticket.ticketId },
-          update: { $inc: { ticketAmount: -ticket.quantity } },
+          update: { $inc: { ticketAmount: -ticket.quantity, soldQuantity: ticket.quantity } },
         },
       });
     }
 
-    await TicketModel.bulkWrite(ticketUpdates);
+    // Cập nhật số lượng vé
+    await TicketModel.bulkWrite(ticketUpdates);//.session(session);
 
     // await session.commitTransaction();
     // session.endSession();
 
     return {
-      EM: "Check tickets successfully...",
+      EM: "Cập nhật vé thành công...",
       EC: 0,
       DT: [],
     };
   } catch (error) {
-    console.log(error);
+    console.log("Lỗi khi cập nhật vé:", error);
+    // await session.abortTransaction();
+    // session.endSession();
     return {
-      EM: "Something went wrong in service...",
+      EM: "Có lỗi xảy ra khi cập nhật vé...",
       EC: -2,
       DT: [],
     };
@@ -156,6 +168,15 @@ const updateTicket = async (data) => {
       };
     }
 
+    let existingTicket = await TicketModel.findById(data.ticketId);
+    if (!existingTicket) {
+      return {
+        EM: "Ticket not found...",
+        EC: 1,
+        DT: [],
+      };
+    }
+
     let updatedTicket = await TicketModel.findByIdAndUpdate(
       data.ticketId,
       {
@@ -166,22 +187,12 @@ const updateTicket = async (data) => {
         ticketMin: data.ticketMin,
         ticketMax: data.ticketMax,
         ticketDesc: data.ticketDesc,
-        ticketImage: data.ticketImage,
-        eventTicketSaleStartTime: formatDateString(
-          data.eventTicketSaleStartTime
-        ),
+        ticketImage: data.ticketImage ? data.ticketImage : existingTicket.ticketImage,
+        eventTicketSaleStartTime: formatDateString(data.eventTicketSaleStartTime),
         eventTicketSaleEndTime: formatDateString(data.eventTicketSaleEndTime),
       },
       { new: true }
     );
-
-    if (!updatedTicket) {
-      return {
-        EM: "Ticket not found...",
-        EC: 1,
-        DT: [],
-      };
-    }
 
     return {
       EM: "Update ticket successfully...",

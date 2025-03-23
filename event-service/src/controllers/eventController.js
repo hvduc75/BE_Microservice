@@ -21,7 +21,7 @@ const getEventById = async (req, res) => {
 
 const getEventByCondition = async (req, res) => {
   try {
-    let data = await eventService.getEventByCondition(req.query);
+    let data = await eventService.getEventByCondition(req.user.userId, req.query);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -124,7 +124,6 @@ const editEvent = async (req, res) => {
 
 const updateEventDate = async (req, res) => {
   try {
-    console.log(req.body);
     let data = await eventService.updateEventDate(req.body);
     return res.status(200).json({
       EM: data.EM,

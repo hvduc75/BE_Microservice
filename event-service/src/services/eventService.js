@@ -24,21 +24,27 @@ const getEventById = async (eventId) => {
   }
 };
 
-const getEventByCondition = async (data) => {
+const getEventByCondition = async (userId, data) => {
   try {
     const { condition, limit = 5, page = 1 } = data;
     if (condition === undefined) {
       return { EM: "Must have condition", EC: 1, DT: "" };
     }
 
+    if (!userId) {
+      return { EM: "Must have userId", EC: 1, DT: "" };
+    }
+
     const pageNumber = parseInt(page, 10) || 1;
     const limitNumber = parseInt(limit, 10) || 5;
     const skip = (pageNumber - 1) * limitNumber;
 
-    const totalEvents = await EventModel.countDocuments({ checkAddEvent: condition });
+    const totalEvents = await EventModel.countDocuments({
+      checkAddEvent: condition,
+    });
     const totalPages = Math.ceil(totalEvents / limitNumber);
 
-    const events = await EventModel.find({ checkAddEvent: condition })
+    const events = await EventModel.find({ checkAddEvent: condition, userId })
       .skip(skip)
       .limit(limitNumber)
       .sort({ createdAt: -1 });
