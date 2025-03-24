@@ -42,6 +42,31 @@ const getBookingById = async (userId, bookingId) => {
   }
 };
 
+const getBookingByEventId = async (userId, eventId) => {
+  try {
+    if (!eventId) {
+      return {
+        EM: "Must have eventId",
+        EC: -1,
+        DT: [],
+      };
+    }
+    let bookings = await BookingModel.findOne({
+      userId: userId,
+      eventId: eventId,
+      status: "PENDING",
+    });
+    return { EM: "Get booking successfully", EC: 0, DT: bookings };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const getAllBookingByEventId = async (userId, eventId) => {
   try {
     if (!eventId) {
@@ -161,12 +186,16 @@ const deleteBooking = async (userId, bookingId) => {
     let dataPayload = {
       event: "DELETE_BOOKING",
       data: {
-        eventId: booking.eventId, 
+        eventId: booking.eventId,
         tickets: booking.tickets,
       },
     };
 
-    PublishMessage(channel, process.env.EVENT_SERVICE, JSON.stringify(dataPayload));
+    PublishMessage(
+      channel,
+      process.env.EVENT_SERVICE,
+      JSON.stringify(dataPayload)
+    );
 
     if (!booking) {
       return {
@@ -192,4 +221,5 @@ module.exports = {
   updateReceiverInfo,
   getAllBookingByEventId,
   deleteBooking,
+  getBookingByEventId,
 };
