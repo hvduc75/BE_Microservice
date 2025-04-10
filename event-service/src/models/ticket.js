@@ -10,7 +10,7 @@ const TicketSchema = new mongoose.Schema(
     ticketMin: { type: Number, required: true },
     ticketMax: { type: Number, required: true },
     ticketDesc: { type: String, required: true },
-    ticketImage: { type: Buffer },
+    ticketImage: { type: String },
     eventTicketSaleStartTime: { type: Date, required: true },
     eventTicketSaleEndTime: { type: Date, required: true },
   },

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import './cron/cronJobs';
 import connectDB from "./config/ConnectDB.js";
+import connectCloudinary from "./config/cloudinary.js";
 import initApiRoutes from "./routes/api.js";
 import { CreateChannel } from "./utils/index.js";
 
@@ -24,6 +25,7 @@ const StartServer = async () => {
 
   initApiRoutes(app, channel);
   await connectDB();
+  await connectCloudinary();
   
   app.listen(process.env.PORT || 8083, () => {
     console.log(`Shopping Service is running on port ${process.env.PORT || 8083}`);

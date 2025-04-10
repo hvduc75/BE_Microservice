@@ -1,4 +1,5 @@
 import eventService from "../services/eventService";
+import uploadToCloudinary from "../utils/uploadToCloudinary";
 
 const getEventById = async (req, res) => {
   // console.log(req.user); tạm thời chưa dùng được userId vì nó đã bỏ qua JWT mất rồi nên ko gán lại decoded lại được
@@ -93,19 +94,17 @@ const getEventByScore = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const AddEvent = async (req, res) => {
   try {
-    const eventLogo = req.files["eventLogo"]
-      ? req.files["eventLogo"][0].buffer
-      : null;
-    const backgroundEvent = req.files["backgroundEvent"]
-      ? req.files["backgroundEvent"][0].buffer
-      : null;
-    const organizerLogo = req.files["organizerLogo"]
-      ? req.files["organizerLogo"][0].buffer
-      : null;
+    const eventLogoFile = req.files["eventLogo"] ? req.files["eventLogo"][0] : null;
+    const backgroundEventFile = req.files["backgroundEvent"] ? req.files["backgroundEvent"][0] : null;
+    const organizerLogoFile = req.files["organizerLogo"] ? req.files["organizerLogo"][0] : null;
+
+    const eventLogo = eventLogoFile ? await uploadToCloudinary(eventLogoFile) : null;
+    const backgroundEvent = backgroundEventFile ? await uploadToCloudinary(backgroundEventFile) : null;
+    const organizerLogo = organizerLogoFile ? await uploadToCloudinary(organizerLogoFile) : null;
 
     let data = await eventService.AddEvent(req.user.userId, {
       ...req.body,
@@ -264,5 +263,5 @@ module.exports = {
   searchEvent,
   getEventByTime,
   updateScore,
-  getEventByScore
+  getEventByScore,
 };

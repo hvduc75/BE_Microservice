@@ -1,8 +1,10 @@
 import ticketService from "../services/ticketService";
+import uploadToCloudinary from "../utils/uploadToCloudinary";
 
 const AddTicket = async (req, res) => {
   try {
-    const ticketImage = req.file ? req.file.buffer : null;
+    const ticket = req.file ? req.file : null;
+    const ticketImage = ticket ? await uploadToCloudinary(ticket) : null;
     let data = await ticketService.AddTicket({ ...req.body, ticketImage });
     return res.status(200).json({
       EM: data.EM,
