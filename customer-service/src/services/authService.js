@@ -214,6 +214,7 @@ const upsertUserSocialMedia = async (typeAcc, dataRaw) => {
         }
         let groupWithRoles = await getGroupWithRoles(user);
         let payload = {
+            userId: user.id,
             email: user.email,
             groupWithRoles,
             username: user.name,
@@ -225,7 +226,6 @@ const upsertUserSocialMedia = async (typeAcc, dataRaw) => {
         refresh_expired.setDate(refresh_expired.getDate() + 2);
 
         await user.update({ refresh_token, refresh_expired, tokenLogin });
-        await createFunc(user.id);
         return user;
     } catch (error) {
         console.log(error);
@@ -244,6 +244,7 @@ const checkTokenLogin = async (userId, tokenLogin) => {
 
             let groupWithRoles = await getGroupWithRoles(user);
             let payload = {
+                userId: user.id,
                 email: user.email,
                 groupWithRoles,
                 username: user.name,
@@ -256,15 +257,15 @@ const checkTokenLogin = async (userId, tokenLogin) => {
                 EC: 0,
                 DT: {
                     access_token: access_token,
-                    refresh_token: user.refresh_token,
                     groupWithRoles: groupWithRoles,
+                    refresh_token: user.refresh_token,
                     role: groupWithRoles.name,
                     email: user.email,
                     phone: user.phone,
                     username: user.username,
                     id: user.id,
                     avatar: user.avatar,
-                    gender: user.sex,
+                    gender: user.gender,
                     birthDay: user.birthDay,
                 },
             };

@@ -13,6 +13,9 @@ const nonSecurePaths = [
     '/searchEvent',
     '/getEventByScore',
     '/getEventByTime',
+    '/auth/google',
+    '/google/redirect',
+    '/checkTokenLogin',
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {

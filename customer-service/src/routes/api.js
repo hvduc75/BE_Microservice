@@ -4,17 +4,19 @@ import roleController from "../controllers/roleController.js";
 import groupController from "../controllers/groupController.js";
 import userController from "../controllers/userController.js";
 import extractUserFromHeader from "../middleware/extractUser";
+import extractTokenFromHeader from "../middleware/extractToken.js";
 import multer from "multer";
 
 const router = express.Router();
 const extractUser = extractUserFromHeader;
+const extractToken = extractTokenFromHeader;
 
 // config form data
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const initApiRoutes = (app) => {
-  router.all("*", extractUser);
+  router.all("*", extractUser, extractToken);
 
   // user routes
   router.get("/account", userController.getAccount);

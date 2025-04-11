@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 
 import connectDB from "./config/connectDB.js";
 import initApiRoutes from "./routes/api.js";
+import initOAuthApiRoutes from './routes/oauthApi';
+import configLoginWIthGoogle from './controllers/social/GoogleController';
+import configLoginWIthFacebook from './controllers/social/FacebookController';
 
 dotenv.config();
 
@@ -23,6 +26,10 @@ connectDB();
 
 // config router
 initApiRoutes(app);
+initOAuthApiRoutes(app);
+
+configLoginWIthGoogle();
+configLoginWIthFacebook();
 
 app.listen(PORT, () => {
   console.log('Server is running on PORT: ' + PORT);

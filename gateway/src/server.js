@@ -20,7 +20,11 @@ app.use(cookieParser());
 
 const addUserToHeaders = (proxyReqOpts, srcReq) => {
   if (srcReq.user) {
-    proxyReqOpts.headers["X-User"] = JSON.stringify(srcReq.user);
+    const userBase64 = Buffer.from(JSON.stringify(srcReq.user)).toString("base64");
+    proxyReqOpts.headers["X-User"] = userBase64;
+  }
+  if (srcReq.token) {
+    proxyReqOpts.headers["X-Token"] = srcReq.token;
   }
   return proxyReqOpts;
 };
