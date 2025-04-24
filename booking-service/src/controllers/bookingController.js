@@ -42,6 +42,28 @@ const getBookingByEventId = async (req, res) => {
   }
 };
 
+const getBookingByCondition = async (req, res) => {
+  try {
+    let data = await bookingService.getBookingByCondition(
+      req.user.userId,
+      req.query.condition,
+      req.query.time
+    );
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
 const getAllBookingByEventId = async (req, res) => {
   try {
     let data = await bookingService.getAllBookingByEventId(
@@ -130,4 +152,5 @@ module.exports = {
   getAllBookingByEventId,
   deleteBooking,
   getBookingByEventId,
+  getBookingByCondition
 };

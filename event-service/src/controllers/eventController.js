@@ -42,6 +42,28 @@ const getEventByCondition = async (req, res) => {
   }
 };
 
+const getEventByExpired = async (req, res) => {
+  try {
+    const eventId = req.query.eventId ? req.query.eventId : null;
+    const time = req.query.time ? req.query.time : null;
+    console.log("EventId:", eventId);
+    console.log("Time:", time);
+    let data = await eventService.getEventByExpired(eventId, time);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 const searchEvent = async (req, res) => {
   try {
     let data = await eventService.searchEvent(req.query);
@@ -98,13 +120,25 @@ const getEventByScore = async (req, res) => {
 
 const AddEvent = async (req, res) => {
   try {
-    const eventLogoFile = req.files["eventLogo"] ? req.files["eventLogo"][0] : null;
-    const backgroundEventFile = req.files["backgroundEvent"] ? req.files["backgroundEvent"][0] : null;
-    const organizerLogoFile = req.files["organizerLogo"] ? req.files["organizerLogo"][0] : null;
+    const eventLogoFile = req.files["eventLogo"]
+      ? req.files["eventLogo"][0]
+      : null;
+    const backgroundEventFile = req.files["backgroundEvent"]
+      ? req.files["backgroundEvent"][0]
+      : null;
+    const organizerLogoFile = req.files["organizerLogo"]
+      ? req.files["organizerLogo"][0]
+      : null;
 
-    const eventLogo = eventLogoFile ? await uploadToCloudinary(eventLogoFile) : null;
-    const backgroundEvent = backgroundEventFile ? await uploadToCloudinary(backgroundEventFile) : null;
-    const organizerLogo = organizerLogoFile ? await uploadToCloudinary(organizerLogoFile) : null;
+    const eventLogo = eventLogoFile
+      ? await uploadToCloudinary(eventLogoFile)
+      : null;
+    const backgroundEvent = backgroundEventFile
+      ? await uploadToCloudinary(backgroundEventFile)
+      : null;
+    const organizerLogo = organizerLogoFile
+      ? await uploadToCloudinary(organizerLogoFile)
+      : null;
 
     let data = await eventService.AddEvent(req.user.userId, {
       ...req.body,
@@ -264,4 +298,5 @@ module.exports = {
   getEventByTime,
   updateScore,
   getEventByScore,
+  getEventByExpired,
 };

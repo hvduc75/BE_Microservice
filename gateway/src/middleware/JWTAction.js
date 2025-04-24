@@ -16,6 +16,7 @@ const nonSecurePaths = [
     '/auth/google',
     '/google/redirect',
     '/checkTokenLogin',
+    '/getEventByExpired',
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {
@@ -44,6 +45,7 @@ const verifyToken = (token, JWT_SECRET) => {
 
 const extractToken = (req) => {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        console.log('req.headers.authorization', req.headers.authorization.split(' ')[1]);
         return req.headers.authorization.split(' ')[1];
     }
     return null;

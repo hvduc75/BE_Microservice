@@ -105,6 +105,7 @@ const searchEvent = async (data) => {
 
 const getEventByTime = async (data) => {
   try {
+    console.log("data", data);
     const { date, limit = 20, page = 1 } = data;
 
     if (!date) {
@@ -186,6 +187,57 @@ const getEventByTime = async (data) => {
       EM: "Something went wrong in service...",
       EC: -2,
       DT: [],
+    };
+  }
+};
+
+const getEventByExpired = async (eventId, time) => {
+  try {
+    if (!eventId) {
+      return {
+        EM: "Missing event ID",
+        EC: -1,
+        DT: null,
+      };
+    }
+
+    const now = new Date();
+
+    let query = { _id: eventId };
+
+    if (time === "END") {
+      query.endDate = { $lt: now }; // Đã kết thúc
+    } else if (time === "START") {
+      query.endDate = { $gte: now }; // Sắp diễn ra
+    }
+
+    const event = await EventModel.findOne(query, {
+      eventName: 1,
+      locationName: 1,
+      endDate: 1,
+      startDate: 1,
+      address: 1,
+    });
+
+    if (!event) {
+      return {
+        EM: "Event not found with given condition",
+        EC: 1,
+        DT: null,
+      };
+    }
+
+    return {
+      EM: "Get event successfully",
+      EC: 0,
+      DT: event,
+    };
+  } catch (error) {
+    console.log("Error in getEventByExpired:", error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: null,
     };
   }
 };
@@ -322,7 +374,7 @@ const updateEventDate = async (data) => {
     }
 
     let event = await EventModel.findOne({ _id: eventId });
-    event.startDate = startDate ?  formatDateString(startDate) : event.startDate;
+    event.startDate = startDate ? formatDateString(startDate) : event.startDate;
     event.endDate = endDate ? formatDateString(endDate) : event.endDate;
 
     await event.save();
@@ -456,4 +508,5 @@ export default {
   getEventByTime,
   updateScore,
   getEventByScore,
+  getEventByExpired,
 };
