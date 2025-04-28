@@ -66,27 +66,124 @@ const getEventByCondition = async (role, userId, data) => {
 
 const searchEvent = async (data) => {
   try {
-    const { category, limit = 20, page = 1 } = data;
+    const { category, q, page = 1, limit = 20, date, location, isFree } = data;
+    const sanitizeParam = (param) => (param === "null" ? null : param);
 
-    if (!category) {
-      return { EM: "Must have category", EC: 1, DT: "" };
-    }
+    const sanitizedCategory = sanitizeParam(category);
+    const sanitizedQ = sanitizeParam(q);
+    const sanitizedDate = sanitizeParam(date);
+    const sanitizedLocation = sanitizeParam(location);
+    const sanitizedIsFree = sanitizeParam(isFree);
+
+    console.log("search params", {
+      category: sanitizedCategory,
+      q: sanitizedQ,
+      page,
+      limit,
+      date: sanitizedDate,
+      location: sanitizedLocation,
+      isFree: sanitizedIsFree,
+    });
 
     const pageNumber = parseInt(page, 10) || 1;
-    const categoryData = String(category);
     const limitNumber = parseInt(limit, 10) || 20;
     const skip = (pageNumber - 1) * limitNumber;
 
-    const totalEvents = await EventModel.countDocuments({
-      eventType: { $regex: categoryData, $options: "i" },
+    const queryConditions = {
       checkAddEvent: 2,
-    });
+    };
+
+    if (
+      sanitizedCategory !== "undefined" &&
+      sanitizedCategory !== null &&
+      sanitizedCategory !== ""
+    ) {
+      queryConditions.eventType = {
+        $regex: String(sanitizedCategory),
+        $options: "i",
+      };
+    }
+
+    if (sanitizedQ) {
+      queryConditions.$or = [
+        { eventName: { $regex: sanitizedQ, $options: "i" } },
+        { eventDescription: { $regex: sanitizedQ, $options: "i" } },
+      ];
+    }
+
+    if (sanitizedDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      const friday = new Date(today);
+      friday.setDate(today.getDate() + (5 - dayOfWeek)); // 5 = Friday
+
+      const sunday = new Date(today);
+      sunday.setDate(today.getDate() + (7 - dayOfWeek)); // 0 = Sunday next (hoặc 0 nếu hôm nay chủ nhật)
+      sunday.setHours(23, 59, 59, 999);
+
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const endOfTomorrow = new Date(tomorrow);
+      endOfTomorrow.setHours(23, 59, 59, 999);
+
+      const endOfToday = new Date(today);
+      endOfToday.setHours(23, 59, 59, 999);
+
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      switch (date) {
+        case "today":
+          queryConditions.startDate = { $gte: today, $lte: endOfToday };
+          break;
+        case "tomorrow":
+          queryConditions.startDate = { $gte: tomorrow, $lte: endOfTomorrow };
+          break;
+        case "this_week":
+          if (dayOfWeek >= 5) {
+            // Friday (5), Saturday (6), Sunday (0)
+            queryConditions.startDate = { $gte: today, $lte: sunday };
+          } else {
+            // Nếu trước thứ 6, không tìm gì cả
+            queryConditions.startDate = { $gte: friday, $lte: sunday };
+          }
+          break;
+        case "this_month":
+          queryConditions.startDate = { $gte: today, $lte: endOfMonth };
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Filter by location
+    if (sanitizedLocation) {
+      let locationName = "";
+      if (sanitizedLocation === "hcm") {
+        locationName = "Hồ Chí Minh";
+      } else if (sanitizedLocation === "hn") {
+        locationName = "Hà Nội";
+      } else if (sanitizedLocation === "dl") {
+        locationName = "Đà Lạt";
+      }
+      queryConditions.address = { $regex: locationName, $options: "i" };
+    }
+
+    // Filter by isFree
+    if (sanitizedIsFree === "true") {
+      queryConditions["tickets.price"] = 0;
+    } else if (sanitizedIsFree === false) {
+      queryConditions["tickets.price"] = { $gt: 0 };
+    }
+
+    console.log("queryConditions", queryConditions);
+
+    const totalEvents = await EventModel.countDocuments(queryConditions);
     const totalPages = Math.ceil(totalEvents / limitNumber);
 
-    const events = await EventModel.find({
-      eventType: { $regex: categoryData, $options: "i" },
-      checkAddEvent: 2,
-    })
+    const events = await EventModel.find(queryConditions)
       .populate("tickets")
       .skip(skip)
       .limit(limitNumber)
