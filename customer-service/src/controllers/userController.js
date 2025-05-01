@@ -146,7 +146,7 @@ const updateReceiverInfo = async (req, res) => {
 
 const deleteFunc = async (req, res) => {
     try {
-        let data = await userApiService.deleteUser(req.body.id);
+        let data = await userApiService.deleteUser(req.query.userId);
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,

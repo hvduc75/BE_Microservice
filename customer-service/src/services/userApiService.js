@@ -52,6 +52,7 @@ const createNewUser = async (data) => {
         let hashPassword = hashUserPassword(data.password);
         await db.User.create({
             ...data,
+            birthDay: data.birthday ? data.birthday : null,
             password: hashPassword,
             avatar: data.image,
         });
@@ -166,7 +167,7 @@ const getUserWithPagination = async (page, limit) => {
         const { count, rows } = await db.User.findAndCountAll({
             offset: offset,
             limit: limit,
-            attributes: ['id', 'username', 'email', 'groupId', 'address', 'avatar'],
+            attributes: ['id', 'username', 'email', 'groupId', 'address', 'avatar', 'phone', 'birthDay'],
             include: { model: db.Group, attributes: ['name', 'description'] },
             order: [['id', 'DESC']],
         });
@@ -210,7 +211,7 @@ const updateUser = async (data) => {
         if (user) {
             await user.update({
                 username: data.username,
-                address: data.address,
+                birthDay: data.birthDay,
                 groupId: data.groupId,
                 avatar: data.image,
             });

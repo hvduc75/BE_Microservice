@@ -20,12 +20,16 @@ const initApiRoutes = (app) => {
 
   // user routes
   router.get("/account", userController.getAccount);
+  router.get('/get-All-User', userController.readFunc);
+  router.post('/create-user', upload.single('image'), userController.createFunc);
   router.post("/login", upload.none(), authController.handleLogin);
   router.post("/register", upload.none(), authController.handleRegister);
   router.post("/logout", authController.handleLogout);
   router.post("/refresh_token", authController.handleRefreshToken);
+  router.put('/update-user', upload.single('image'), userController.updateFunc);
   router.put("/update-profile", upload.single('avatar'), userController.updateProfile);
   router.put("/update-receiverInfo", upload.none(), userController.updateReceiverInfo);
+  router.delete('/delete-user', userController.deleteFunc);
 
   // role routes
   router.get("/role/read", roleController.readFunc);
