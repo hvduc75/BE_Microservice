@@ -26,7 +26,7 @@ const StartServer = async () => {
   await connectDB();
   
   app.listen(process.env.PORT || 8082, () => {
-    console.log(`Shopping Service is running on port ${process.env.PORT || 8082}`);
+    console.log(`Booking Service is running on port ${process.env.PORT || 8082}`);
   });
 }
 

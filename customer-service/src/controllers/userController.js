@@ -1,212 +1,236 @@
-import userApiService from '../services/userApiService';
+import userApiService from "../services/userApiService";
 
 const createFunc = async (req, res) => {
-    try {
-        req.body.image = req.file ? req.file.buffer : null;
-        let data = await userApiService.createNewUser(req.body);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    req.body.image = req.file ? req.file.buffer : null;
+    let data = await userApiService.createNewUser(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const readFunc = async (req, res) => {
-    try {
-        if (req.query.page && req.query.limit) {
-            let page = req.query.page;
-            let limit = req.query.limit;
-            let data = await userApiService.getUserWithPagination(+page, +limit);
-            return res.status(200).json({
-                EM: data.EM,
-                EC: data.EC,
-                DT: data.DT,
-            });
-        } else {
-            let data = await userApiService.getAllUser();
-            return res.status(200).json({
-                EM: data.EM,
-                EC: data.EC,
-                DT: data.DT,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
+  try {
+    if (req.query.page && req.query.limit) {
+      let page = req.query.page;
+      let limit = req.query.limit;
+      let data = await userApiService.getUserWithPagination(+page, +limit);
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } else {
+      let data = await userApiService.getAllUser();
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
     }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const getUserById = async (req, res) => {
-    try {
-        const userId = req.query.userId;
-        let data = await userApiService.getUserById(userId);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    const userId = req.query.userId;
+    let data = await userApiService.getUserById(userId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
+const getUserByGroupId = async (req, res) => {
+  try {
+    const groupId = req.query.groupId;
+    let data = await userApiService.getUsersByGroupId(groupId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const getAllUserByWeek = async (req, res) => {
-    try {
-        let startDate = req.query.startDate;
-        let data = await userApiService.getAllUserByWeek(startDate);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    let startDate = req.query.startDate;
+    let data = await userApiService.getAllUserByWeek(startDate);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const updateFunc = async (req, res) => {
-    try {
-        req.body.image = req.file ? req.file.buffer : null;
-        let data = await userApiService.updateUser(req.body);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    req.body.image = req.file ? req.file.buffer : null;
+    let data = await userApiService.updateUser(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const updateProfile = async (req, res) => {
-    try {
-        req.body.userId = req.user.userId;
-        req.body.avatar = req.file ? req.file.buffer : null;
-        let data = await userApiService.updateProfile(req.body);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    req.body.userId = req.user.userId;
+    req.body.avatar = req.file ? req.file.buffer : null;
+    let data = await userApiService.updateProfile(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const updateReceiverInfo = async (req, res) => {
-    try {
-        req.body.userId = req.user.userId;
-        let data = await userApiService.updateReceiverInfo(req.body);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    req.body.userId = req.user.userId;
+    let data = await userApiService.updateReceiverInfo(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const deleteFunc = async (req, res) => {
-    try {
-        let data = await userApiService.deleteUser(req.query.userId);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    let data = await userApiService.deleteUser(req.query.userId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const getAccount = async (req, res) => {
-    try {
-        let data = await userApiService.getAccount(req.user.email, req.token, req.user.groupWithRoles);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    let data = await userApiService.getAccount(
+      req.user.email,
+      req.token,
+      req.user.groupWithRoles
+    );
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 const updatePhone = async (req, res) => {
-    try {
-        let data = await userApiService.updatePhone(req.body);
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            EM: 'error from server',
-            EC: '-1',
-            DT: '',
-        });
-    }
+  try {
+    let data = await userApiService.updatePhone(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
 };
 
 module.exports = {
-    createFunc,
-    readFunc,
-    updateFunc,
-    deleteFunc,
-    updateProfile,
-    getUserById,
-    getAllUserByWeek,
-    getAccount,
-    updatePhone,
-    updateReceiverInfo
+  createFunc,
+  readFunc,
+  updateFunc,
+  deleteFunc,
+  updateProfile,
+  getUserById,
+  getAllUserByWeek,
+  getAccount,
+  updatePhone,
+  updateReceiverInfo,
+  getUserByGroupId
 };

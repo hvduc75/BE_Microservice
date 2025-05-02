@@ -21,6 +21,7 @@ const initApiRoutes = (app) => {
   // user routes
   router.get("/account", userController.getAccount);
   router.get('/get-All-User', userController.readFunc);
+  router.get('/get-user-by-groupId', userController.getUserByGroupId);
   router.post('/create-user', upload.single('image'), userController.createFunc);
   router.post("/login", upload.none(), authController.handleLogin);
   router.post("/register", upload.none(), authController.handleRegister);

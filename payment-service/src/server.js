@@ -22,7 +22,7 @@ const StartServer = async () => {
   await connectDB();
   
   app.listen(process.env.PORT || 8084, () => {
-    console.log(`Shopping Service is running on port ${process.env.PORT || 8084}`);
+    console.log(`Payment Service is running on port ${process.env.PORT || 8084}`);
   });
 }
 

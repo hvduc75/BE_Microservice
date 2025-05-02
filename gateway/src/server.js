@@ -60,6 +60,13 @@ app.use(
     proxyReqOptDecorator: addUserToHeaders,
   })
 );
+app.use(
+  "/notification",
+  checkUserJWT,
+  proxy("http://localhost:8085", {
+    proxyReqOptDecorator: addUserToHeaders,
+  })
+);
 
 app.listen(8080, () => {
   console.log("Gateway is Listening to Port 8080");

@@ -1,5 +1,6 @@
 import moment from "moment";
 import { EventModel } from "../models";
+import { sendEventApprovalNotification } from "./eventAssignmentService";
 
 const formatDateString = (dateString) => {
   return moment(dateString).format("YYYY-MM-DD HH:mm:ss");
@@ -524,14 +525,19 @@ const updateBankAccount = async (data) => {
     if (!event) {
       return { EM: "Event not found", EC: 1, DT: "" };
     }
+
+    const isFirstTimeComplete = event.checkAddEvent === 0;
+
     event.accountName = data.accountName;
     event.accountNumber = data.accountNumber;
     event.bankName = data.bankName;
     event.branch = data.branch;
 
+    if (isFirstTimeComplete) {
+      event.checkAddEvent = 1;
+    }
     await event.save();
-    event.checkAddEvent = 1;
-    await event.save();
+    sendEventApprovalNotification(event);
 
     return { EM: "Update bank account successfully", EC: 0, DT: event };
   } catch (error) {

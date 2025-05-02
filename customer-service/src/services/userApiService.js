@@ -194,6 +194,44 @@ const getUserWithPagination = async (page, limit) => {
     }
 };
 
+const getUsersByGroupId = async (groupId) => {
+    try {
+        if (!groupId) {
+            return {
+                EM: 'Missing groupId',
+                EC: 1,
+                DT: [],
+            };
+        }
+
+        const users = await db.User.findAll({
+            where: { groupId: groupId },
+            attributes: ['id', 'username', 'email', 'phone', 'address'],
+        });
+
+        if (users && users.length > 0) {
+            return {
+                EM: 'Get users successfully',
+                EC: 0,
+                DT: users,
+            };
+        } else {
+            return {
+                EM: 'No users found for this group',
+                EC: 2,
+                DT: [],
+            };
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            EM: 'Something went wrong with the service',
+            EC: -1,
+            DT: [],
+        };
+    }
+};
+
 const updateUser = async (data) => {
     try {
         if (!data.groupId) {
@@ -453,5 +491,6 @@ module.exports = {
     getAllUserByWeek,
     getAccount,
     updatePhone,
-    updateReceiverInfo
+    updateReceiverInfo,
+    getUsersByGroupId
 };
