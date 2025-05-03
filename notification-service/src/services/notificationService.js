@@ -20,6 +20,7 @@ const createNotification = async (data) => {
       type,
       title,
       message,
+      status: "unread",
       eventId,
       eventImage,
       createdAt: notification.createdAt,

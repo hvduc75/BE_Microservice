@@ -1,5 +1,5 @@
 import moment from "moment";
-import { EventModel } from "../models";
+import { EventModel, EventAssignmentModel } from "../models";
 import { sendEventApprovalNotification } from "./eventAssignmentService";
 
 const formatDateString = (dateString) => {
@@ -55,6 +55,52 @@ const getEventByCondition = async (role, userId, data) => {
       .sort({ createdAt: -1 });
 
     return { EM: "Get event successfully", EC: 0, DT: { events, totalPages } };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+const getEventByAdmin = async (adminId, data) => {
+  try {
+    const { limit = 5, page = 1 } = data;
+
+    if (!adminId) {
+      return { EM: "Must have adminId", EC: 1, DT: "" };
+    }
+
+    // Bước 1: Lấy danh sách eventId được phân công cho admin
+    const assignments = await EventAssignmentModel.find({ adminId });
+    const eventIds = assignments.map(item => item.eventId);
+
+    // Bước 2: Đếm tổng số sự kiện có checkAddEvent = 1
+    const total = await EventModel.countDocuments({
+      _id: { $in: eventIds },
+      checkAddEvent: 1
+    });
+
+    // Bước 3: Lấy danh sách sự kiện phân trang + điều kiện
+    const events = await EventModel.find({
+      _id: { $in: eventIds },
+      checkAddEvent: 1
+    })
+      .populate("tickets")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return {
+      EM: "Get events successfully",
+      EC: 0,
+      DT: {
+        totalPages: Math.ceil(total / limit),
+        events,
+      },
+    };
   } catch (error) {
     console.log(error);
     return {
@@ -535,9 +581,9 @@ const updateBankAccount = async (data) => {
 
     if (isFirstTimeComplete) {
       event.checkAddEvent = 1;
+      sendEventApprovalNotification(event);
     }
     await event.save();
-    sendEventApprovalNotification(event);
 
     return { EM: "Update bank account successfully", EC: 0, DT: event };
   } catch (error) {
@@ -612,4 +658,5 @@ export default {
   updateScore,
   getEventByScore,
   getEventByExpired,
+  getEventByAdmin
 };

@@ -42,6 +42,24 @@ const getEventByCondition = async (req, res) => {
   }
 };
 
+const getEventByAdmin = async (req, res) => {
+  try {
+    let data = await eventService.getEventByAdmin(req.user.userId, req.query);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 const getEventByExpired = async (req, res) => {
   try {
     const eventId = req.query.eventId ? req.query.eventId : null;
@@ -299,4 +317,5 @@ module.exports = {
   updateScore,
   getEventByScore,
   getEventByExpired,
+  getEventByAdmin
 };

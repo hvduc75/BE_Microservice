@@ -22,6 +22,7 @@ const initApiRoutes = (app, channel) => {
 
   router.get("/getEventById", eventController.getEventById);
   router.get("/getEventByCondition", eventController.getEventByCondition);
+  router.get("/getEventByAdminId", eventController.getEventByAdmin);
   router.get("/searchEvent", eventController.searchEvent);
   router.get("/getEventByTime", eventController.getEventByTime);
   router.get("/getEventByScore", eventController.getEventByScore);
