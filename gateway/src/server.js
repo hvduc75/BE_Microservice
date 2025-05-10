@@ -32,7 +32,7 @@ const addUserToHeaders = (proxyReqOpts, srcReq) => {
 app.use(
   "/customer",
   checkUserJWT,
-  proxy("http://localhost:8081", {
+  proxy("http://customer-service:8081", {
     parseReqBody: false,
     proxyReqOptDecorator: addUserToHeaders,
   })
@@ -40,7 +40,7 @@ app.use(
 app.use(
   "/event",
   checkUserJWT,
-  proxy("http://localhost:8083", {
+  proxy("http://event-service:8083", {
     parseReqBody: false,
     proxyReqOptDecorator: addUserToHeaders,
   })
@@ -48,7 +48,7 @@ app.use(
 app.use(
   "/booking",
   checkUserJWT,
-  proxy("http://localhost:8082", {
+  proxy("http://booking-service:8082", {
     parseReqBody: false,
     proxyReqOptDecorator: addUserToHeaders,
   })
@@ -56,14 +56,14 @@ app.use(
 app.use(
   "/payment",
   checkUserJWT,
-  proxy("http://localhost:8084", {
+  proxy("http://payment-service:8084", {
     proxyReqOptDecorator: addUserToHeaders,
   })
 );
 app.use(
   "/notification",
   checkUserJWT,
-  proxy("http://localhost:8085", {
+  proxy("http://notification-service:8085", {
     proxyReqOptDecorator: addUserToHeaders,
   })
 );

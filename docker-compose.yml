@@ -1,0 +1,117 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: mysql_db
+    environment:
+      MYSQL_DATABASE: customer_service
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  nosql-db:
+    image: mvertes/alpine-mongo
+    ports:
+      - "27018:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - '5672:5672'
+
+  customer-service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./customer-service
+    container_name: customer-service
+    restart: always
+    depends_on:
+      - "mysql"
+      - "rabbitmq"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./customer-service:/app
+      - /app/customer-service/node_modules
+    env_file:
+      - ./customer-service/.env
+
+  booking-service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./booking-service
+    container_name: booking-service
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./booking-service:/app
+      - /app/booking-service/node_modules
+    env_file:
+      - ./booking-service/.env
+
+  gateway:
+    build: 
+      dockerfile: Dockerfile
+      context: ./gateway
+    container_name: gateway
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gateway:/app
+      - /app/gateway/node_modules
+    env_file:
+      - ./gateway/.env
+
+  notification-service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./notification-service
+    container_name: notification-service
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./notification-service:/app
+      - /app/notification-service/node_modules
+    env_file:
+      - ./notification-service/.env
+
+  payment-service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./payment-service
+    container_name: payment-service
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    ports:
+      - "8084:8084"
+    volumes:
+      - ./payment-service:/app
+      - /app/payment-service/node_modules
+    env_file:
+      - ./payment-service/.env
+
+volumes:
+  mysql_data:

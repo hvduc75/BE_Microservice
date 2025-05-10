@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": null,
+    "password": "123456",
     "database": "customer_service",
-    "host": "127.0.0.1",
+    "host": "mysql_db",
     "dialect": "mysql",
     "dialectOptions": {
             "decimalNumbers": true
