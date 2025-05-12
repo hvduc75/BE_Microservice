@@ -17,7 +17,7 @@ initializeChannel();
 export const sendEventApprovalNotification = async (event) => {
   try {
     const response = await axios.get(
-      "http://localhost:8081/get-user-by-groupId",
+      "http://customer-service:8081/get-user-by-groupId",
       {
         params: { groupId: 2 },
       }

@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Mở cổng 8082
-EXPOSE 8083
+EXPOSE 8080
 
 # Chạy ứng dụng
 CMD ["npm", "start"]

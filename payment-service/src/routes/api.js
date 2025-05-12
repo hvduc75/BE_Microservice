@@ -1,7 +1,7 @@
 import express from "express";
 
 import vnpayController from "../controllers/vnpayController";
-import paymenController from "../controllers/paymentController";
+import paymentController from "../controllers/paymentController";
 import extractUserFromHeader from "../middleware/extractUser";
 
 const router = express.Router();
@@ -16,7 +16,7 @@ const initApiRoutes = (app) => {
   router.post("/vnpay/refund", vnpayController.refund);
 
   // payment router
-  router.post("/update-payment", paymenController.updatePayment);
+  router.post("/update-payment", paymentController.updatePayment);
 
   return app.use("/", router);
 };

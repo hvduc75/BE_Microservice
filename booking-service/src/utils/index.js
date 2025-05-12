@@ -13,10 +13,13 @@ export const PublishBookingEvent = async (payload) => {
     console.log("📦 Body:", JSON.stringify(payload, null, 2));
 
     const formData = new FormData();
-    formData.append("event", payload.event); 
+    formData.append("event", payload.event);
     formData.append("data", JSON.stringify(payload.data));
 
-    let response = await axios.post("http://localhost:8080/event/booking-httpcall", formData);    
+    let response = await axios.post(
+      "http://gateway:8080/event/booking-httpcall",
+      formData
+    );
 
     console.log("✅ [RESPONSE] API từ event-service:");
     console.log("🔄 Status:", response.status);
@@ -36,12 +39,15 @@ export const PublishBookingEvent = async (payload) => {
 
 export const CreateChannel = async () => {
   try {
+    console.log("🔌 Đang kết nối đến RabbitMQ:", MSG_QUEUE_URL);
     const connection = await amqplib.connect(MSG_QUEUE_URL);
     const channel = await connection.createChannel();
+    console.log("✅ Đã tạo channel thành công");
     await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
     return channel;
   } catch (error) {
-    console.log(error);
+    console.error("❌ Lỗi khi tạo channel:", error.message);
+    return null;
   }
 };
 

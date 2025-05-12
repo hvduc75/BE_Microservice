@@ -119,7 +119,7 @@ const getBookingByCondition = async (
       allBookings.map(async (booking) => {
         try {
           const res = await axios.get(
-            `http://localhost:8080/event/getEventByExpired?eventId=${booking.eventId}&time=${time}`
+            `http://gateway:8080/event/getEventByExpired?eventId=${booking.eventId}&time=${time}`
           );
           const event = res.data?.DT;
 

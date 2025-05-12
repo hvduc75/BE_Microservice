@@ -19,14 +19,15 @@ services:
       - "27018:27017"
     container_name: nosql-db
     volumes:
-      - ./db/:/data/db
+      - nosql_data:/data/db
 
   rabbitmq:
-    image: rabbitmq:alpine
+    image: rabbitmq:3-management-alpine
     container_name: rabbitmq
     restart: always
     ports:
-      - '5672:5672'
+      - "15672:15672"
+      - "5672:5672"
 
   customer-service:
     build: 
@@ -40,7 +41,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./customer-service:/app
+      - ./customer-service:/app/customer-service
       - /app/customer-service/node_modules
     env_file:
       - ./customer-service/.env
@@ -57,10 +58,27 @@ services:
     ports:
       - "8082:8082"
     volumes:
-      - ./booking-service:/app
+      - ./booking-service:/app/booking-service
       - /app/booking-service/node_modules
     env_file:
       - ./booking-service/.env
+
+  event-service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./event-service
+    container_name: event-service
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./event-service:/app/event-service
+      - /app/event-service/node_modules
+    env_file:
+      - ./event-service/.env
 
   gateway:
     build: 
@@ -74,7 +92,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./gateway:/app
+      - ./gateway:/app/gateway
       - /app/gateway/node_modules
     env_file:
       - ./gateway/.env
@@ -91,7 +109,7 @@ services:
     ports:
       - "8085:8085"
     volumes:
-      - ./notification-service:/app
+      - ./notification-service:/app/notification-service
       - /app/notification-service/node_modules
     env_file:
       - ./notification-service/.env
@@ -108,10 +126,11 @@ services:
     ports:
       - "8084:8084"
     volumes:
-      - ./payment-service:/app
+      - ./payment-service:/app/payment-service
       - /app/payment-service/node_modules
     env_file:
       - ./payment-service/.env
 
 volumes:
   mysql_data:
+  nosql_data:

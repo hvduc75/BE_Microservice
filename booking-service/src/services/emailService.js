@@ -20,7 +20,7 @@ const sendEmail = async (bookingId) => {
     await booking.save();
 
     let data = await axios.get(
-      `http://localhost:8080/event/getEventById?eventId=${booking.eventId}`
+      `http://gateway:8080/event/getEventById?eventId=${booking.eventId}`
     );
 
     const transporter = nodemailer.createTransport({

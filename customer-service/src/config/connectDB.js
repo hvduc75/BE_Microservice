@@ -1,19 +1,18 @@
-const { Sequelize } = require("sequelize");
+import { Sequelize } from "sequelize";
 
-// Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize("customer_service", "root", "", {
-  host: "localhost",
+const sequelize = new Sequelize("customer_service", "root", "123456", {
+  host: "mysql_db",
   dialect: "mysql",
-  logging: false
+  logging: false,
 });
 
-let connectDB = async () => {
+const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    console.log("✅ Connected to container MySQL successfully.");
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    console.error("❌ Failed to connect:", error.message);
   }
 };
 
-module.exports = connectDB
+export default connectDB;

@@ -1,9 +1,9 @@
-const moment = require("moment");
+const moment = require("moment-timezone");
 const querystring = require("qs");
 const crypto = require("crypto");
 import axios from "axios";
 import { PaymentModel } from "../models";
-import paymentService from '../services/paymentService';
+import paymentService from "../services/paymentService";
 
 // Định nghĩa hàm sortObject
 function sortObject(obj) {
@@ -23,12 +23,14 @@ function sortObject(obj) {
 }
 
 const getExpireDate = (countdownInSeconds) => {
-  return moment().add(countdownInSeconds, 'seconds').format('YYYYMMDDHHmmss');
-}
+  // return moment().add(countdownInSeconds, "seconds").format("YYYYMMDDHHmmss");
+  return moment.tz("Asia/Ho_Chi_Minh").add(countdownInSeconds, 'seconds').format("YYYYMMDDHHmmss");
+};
 
 const checkout = async (req, res) => {
-  let date = new Date();
-  let createDate = moment(date).format("YYYYMMDDHHmmss");
+  // let date = new Date();
+  // let createDate = moment(date).format("YYYYMMDDHHmmss");
+  const createDate = moment.tz("Asia/Ho_Chi_Minh").format("YYYYMMDDHHmmss");
 
   let ipAddr =
     req.headers["x-forwarded-for"] ||
@@ -79,17 +81,20 @@ const checkout = async (req, res) => {
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
-  let existingPayment = await PaymentModel.findOne({ userId, bookingId: orderId });
+  let existingPayment = await PaymentModel.findOne({
+    userId,
+    bookingId: orderId,
+  });
 
   if (!existingPayment) {
     const newPayment = new PaymentModel({
       userId,
-      bookingId: orderId, 
+      bookingId: orderId,
       amount,
       status: "PENDING",
       paymentMethod,
     });
-    await newPayment.save(); 
+    await newPayment.save();
   }
 
   res.json({ paymentUrl: vnpUrl });
@@ -122,9 +127,7 @@ const vnpReturn = async (req, res) => {
           transactionId
         );
         if (updateResult.EC === 0) {
-          return res.redirect(
-            "http://localhost:3000/"
-          );
+          return res.redirect("http://localhost:3000/");
         } else {
           return res.json({
             status: "error",
