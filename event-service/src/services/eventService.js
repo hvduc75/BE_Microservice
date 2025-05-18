@@ -111,6 +111,52 @@ const getEventByAdmin = async (adminId, data) => {
   }
 };
 
+const getSpecialEvent = async () => {
+  try {
+    const specialEvents = await EventModel.aggregate([
+      {
+        $lookup: {
+          from: "tickets",
+          localField: "_id",
+          foreignField: "eventId",
+          as: "tickets",
+        },
+      },
+      {
+        $addFields: {
+          totalTickets: { $sum: "$tickets.ticketAmount" },
+        },
+      },
+      {
+        $match: {
+          totalTickets: { $gt: 100 },
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+
+    console.log("specialEvents", specialEvents);  
+
+    return {
+      EM: "Get special events successfully",
+      EC: 0,
+      DT: specialEvents,
+    };
+  } catch (error) {
+    console.error("Error in getSpecialEvent:", error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const searchEvent = async (data) => {
   try {
     const { category, q, page = 1, limit = 20, date, location, isFree } = data;
@@ -658,5 +704,6 @@ export default {
   updateScore,
   getEventByScore,
   getEventByExpired,
-  getEventByAdmin
+  getEventByAdmin,
+  getSpecialEvent
 };

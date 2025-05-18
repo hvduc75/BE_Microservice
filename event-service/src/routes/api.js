@@ -27,6 +27,7 @@ const initApiRoutes = (app, channel) => {
   router.get("/getEventByTime", eventController.getEventByTime);
   router.get("/getEventByScore", eventController.getEventByScore);
   router.get("/getEventByExpired", eventController.getEventByExpired);
+  router.get("/getSpecialEvent", eventController.getSpecialEvent);
   router.post(
     "/add-event",
     upload.fields([

@@ -17,6 +17,7 @@ const nonSecurePaths = [
     '/google/redirect',
     '/checkTokenLogin',
     '/getEventByExpired',
+    '/getSpecialEvent'
 ];
 
 const createJWT = (payload, JWT_SECRET, JWT_EXPIRES_IN) => {
